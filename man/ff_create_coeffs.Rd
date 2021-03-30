@@ -4,15 +4,15 @@
 \alias{ff_create_coeffs}
 \title{Create Coefficients (Function Factory)}
 \usage{
-ff_create_coeffs(size, lim = 20, pm = TRUE, std_dev = 0.1)
+ff_create_coeffs(size, vals = seq(20), pm = TRUE, std_dev = 0.1)
 }
 \arguments{
 \item{size}{numeric. Number of coefficients in each vector.}
 
-\item{lim}{numeric. The range at which coefficients are initially set.}
+\item{vals}{numeric. Possible absolute values for the coefficients to take.}
 
 \item{pm}{(plus / minus) logical. When TRUE coefficients can be
-initially set to \eqn{\[-lim, lim\]}.}
+initially set to [-vals, vals].}
 
 \item{std_dev}{numeric. The SD of the nugget term added to each coefficient.}
 }
@@ -27,6 +27,6 @@ each time while storing the generated coefficients in an object stored
 in the function environment.
 }
 \details{
-For more details on function factories
-see (adv-r.hadley.nz/function-factories.html)\link{A}
+For more details on function factories see
+\href{https://adv-r.hadley.nz/function-factories.html}{Advanced R: Function Factories.}
 }

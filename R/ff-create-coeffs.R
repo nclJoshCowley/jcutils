@@ -4,13 +4,13 @@
 #'   each time while storing the generated coefficients in an object stored
 #'   in the function environment.
 #'
-#' @details For more details on function factories
-#'   see (adv-r.hadley.nz/function-factories.html)[A]
+#' @details For more details on function factories see
+#'   [Advanced R: Function Factories.](https://adv-r.hadley.nz/function-factories.html)
 #'
 #' @param size numeric. Number of coefficients in each vector.
 #' @param vals numeric. Possible absolute values for the coefficients to take.
 #' @param pm (plus / minus) logical. When TRUE coefficients can be
-#'   initially set to \eqn{\[-vals, vals\]}.
+#'   initially set to \[-vals, vals\].
 #' @param std_dev numeric. The SD of the nugget term added to each coefficient.
 #'
 #' @return A call such as `x <- ff_create_coeffs(...)` would allow `x` to be a
@@ -30,7 +30,7 @@ ff_create_coeffs <- function(size, vals = seq(20), pm = TRUE, std_dev = 0.1) {
     # Sign of each coefficient? (+1 or -1)
     c_sign <- if (pm) sample(c(-1, 1), size, replace = TRUE) else 1
     # Store and return
-    c_i <- (c_val * c_sign) + rnorm(size, sd = std_dev)
+    c_i <- (c_val * c_sign) + stats::rnorm(size, sd = std_dev)
     c_all <<- c(c_all, list(c_i))
     return(c_i)
   }
