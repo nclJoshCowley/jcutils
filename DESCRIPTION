@@ -19,7 +19,9 @@ Roxygen: list(markdown = TRUE)
 Imports:
     dplyr,
     magrittr,
+    rlang,
     tibble,
 Suggests:
     DT,
+    kableExtra,
     testthat
