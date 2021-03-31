@@ -9,8 +9,8 @@ chol_solve(x, tol = 100 * .Machine$double.eps)
 \arguments{
 \item{x}{matrix. symmetric (up to \code{tol}) and positive definite.}
 
-\item{tol}{numeric scalar >= 0.  Smaller differences are not
-    considered, see \code{\link[base]{all.equal.numeric}}.}
+\item{tol}{numeric. Differences of symmetry smaller than this value
+are not considered significant.}
 }
 \value{
 the matrix inverse of \code{x}.

@@ -6,7 +6,8 @@
 #'   to `base::solve(x)`.
 #'
 #' @param x matrix. symmetric (up to `tol`) and positive definite.
-#' @inheritParams base::isSymmetric
+#' @param tol numeric. Differences of symmetry smaller than this value
+#'   are not considered significant.
 #'
 #' @return the matrix inverse of `x`.
 #'

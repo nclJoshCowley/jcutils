@@ -1,4 +1,4 @@
-context("Cholesky solve()")
+context("Invert matrices with cholesky solve")
 
 test_that("chol_solve and solve consistent", {
   x_test <- matrix(
