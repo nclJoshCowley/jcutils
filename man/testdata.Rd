@@ -5,7 +5,7 @@
 \alias{testdata}
 \title{Data to be used in unit tests.}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 20 rows and 11 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 100 rows and 16 columns.
 }
 \usage{
 testdata

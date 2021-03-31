@@ -19,6 +19,7 @@ Roxygen: list(markdown = TRUE)
 Imports:
     dplyr,
     magrittr,
+    purrr,
     rlang,
     tibble,
 Suggests:
