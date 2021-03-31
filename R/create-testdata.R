@@ -74,11 +74,12 @@ create_testdata <- function(nrows = 20, incl_na = TRUE) {
   test_resp <- tibble::tibble(
     resp_lp1 = create_lp(),
     resp_lp2 = create_lp(),
-    resp_exp = create_lp(vals = seq(0.01, 0.5, 0.01), pm = FALSE, std_dev = 0.01) %>%
-      exp(),
-    resp_exp_int = create_lp(vals = seq(0.01, 1, 0.01), pm = FALSE, std_dev = 0.01) %>%
-      exp() %>%
-      round(),
+    resp_exp = exp(
+      create_lp(vals = seq(0.01, 0.5, 0.01), pm = FALSE, std_dev = 0.01)
+    ),
+    resp_exp_int = round(exp(
+      create_lp(vals = seq(0.01, 1, 0.01), pm = FALSE, std_dev = 0.01)
+    )),
     resp_inv_logit = create_lp(vals = seq(0.01, 0.5, 0.01), std_dev = 0.001) %>%
       stats::plogis(location = 0, scale = 1), # (inverse logit)
     resp_binom = create_lp(vals = seq(0.01, 0.5, 0.01), std_dev = 0.001) %>%
