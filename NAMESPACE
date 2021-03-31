@@ -2,5 +2,6 @@
 
 export("%>%")
 export(chol_solve)
+export(create_testdata)
 export(rmd_table)
 importFrom(magrittr,"%>%")

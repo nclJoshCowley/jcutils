@@ -36,7 +36,12 @@ NULL
 #' @param incl_na logical. When TRUE, the missing data columns are included.
 #'
 #' @return test data is a tibble object with all variables contained.
+#'
+#' @export
 create_testdata <- function(nrows = 20, incl_na = TRUE) {
+  # Validation
+  stopifnot(nrows >= 0, is.logical(incl_na))
+
   # Explanatory variables
   test_expl <- tibble::tibble(
     expl_rnorm = stats::rnorm(nrows, mean = 0, sd = 1),
