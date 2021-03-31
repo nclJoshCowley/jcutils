@@ -24,6 +24,7 @@
 #' - **exp**. Positive values only, `Y = exp(XB)`.
 #' - **exp_int**. Positive integers only, `Y = round(exp(XB), 0)`.
 #' - **inv_logit**. Inverse logit transformation, `Y = plogis(XB, 0, 1)`.
+#' - **binom**. Values of 1 or 0, `Y ~ Bin(n = 1, p = plogis(XB, 0, 1))`
 #' - **na**. Standard regression with missing values mirrored in `expl_na`.
 #'
 #' @name test_utils
@@ -35,7 +36,7 @@ NULL
 #' @param incl_na logical. When TRUE, the missing data columns are included.
 #'
 #' @return test data is a tibble object with all variables contained.
-create_test_data <- function(nrows = 20, incl_na = TRUE) {
+create_testdata <- function(nrows = 20, incl_na = TRUE) {
   # Explanatory variables
   test_expl <- tibble::tibble(
     expl_rnorm = stats::rnorm(nrows, mean = 0, sd = 1),
@@ -78,8 +79,11 @@ create_test_data <- function(nrows = 20, incl_na = TRUE) {
     resp_exp_int = create_lp(vals = seq(0.01, 1, 0.01), pm = FALSE, std_dev = 0.01) %>%
       exp() %>%
       round(),
-    resp_inv_logit = create_lp(vals = seq(0.01, 1, 0.01), std_dev = 0.01) %>%
-      stats::plogis(location = 0, scale = 1) # (inverse logit)
+    resp_inv_logit = create_lp(vals = seq(0.01, 0.5, 0.01), std_dev = 0.001) %>%
+      stats::plogis(location = 0, scale = 1), # (inverse logit)
+    resp_binom = create_lp(vals = seq(0.01, 0.5, 0.01), std_dev = 0.001) %>%
+      stats::plogis(location = 0, scale = 1) %>%
+      stats::rbinom(n = nrows, size = 1)
     # resp_na added later.
   )
 
