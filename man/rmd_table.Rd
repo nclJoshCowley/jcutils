@@ -25,7 +25,10 @@ Either a HTML table or LaTeX table, depending on format.
 This function utilises the flexibility of kableExtra to choose some 'nice'
 default tables for either HTML or PDF via LaTeX. (subjective)
 }
-\details{
-\strong{TODO} Add in some method to alter column widths, likely as a
-simplex.
+\section{Future Development}{
+
+\itemize{
+\item Add in some method to alter column widths, likely as a ncol-length simplex.
 }
+}
+

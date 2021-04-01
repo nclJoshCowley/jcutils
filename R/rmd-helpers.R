@@ -11,8 +11,8 @@
 #' @param ... extra arguments to be passed to either `kableExtra::kbl`
 #'   or `kableExtra::kable_styling`
 #'
-#' @details **TODO** Add in some method to alter column widths, likely as a
-#'   simplex.
+#' @section Future Development:
+#' - Add in some method to alter column widths, likely as a ncol-length simplex.
 #'
 #' @return Either a HTML table or LaTeX table, depending on format.
 #'
