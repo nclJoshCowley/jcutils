@@ -22,7 +22,9 @@ Imports:
     purrr,
     rlang,
     tibble,
+    tidyr,
+    tidyselect
 Suggests:
-    DT,
+    broom,
     kableExtra,
     testthat
