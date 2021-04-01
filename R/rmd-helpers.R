@@ -83,14 +83,139 @@ rmd_table <- function(x, fmt = c("html", "latex"), scroll_h = NULL, ...) {
   }
 }
 
-# Incorporate this into template ?
-# ```{=html}
-# <style>
-#   thead {
-#     background-color: rgb(48, 97, 123);
-#     color: white;
-#     font-weight: normal;
-#     text-align: center;
-#   }
-# </style>
-#   ```
+
+#' Nice Model Summary in R Markdown
+#'
+#' A better looking summary table with reference columns, rounding, p-value
+#'   highlighting that can be called directly in RMD.
+#'
+#' @param object Typical fit object such as "lm", "mlm", "glm", etc.
+#' @inheritParams rmd_table
+#' @param digits numeric. Significant figures to round to for all numerics
+#'   other than p values.
+#' @param resp regular expression. Should match a single response variable.
+#'   Will be silently ignored for non-mlm objects.
+#'
+#' @export
+rmd_summary <- function(object, fmt = c("html", "latex"), digits = 3, resp) {
+  UseMethod("rmd_summary", object)
+}
+
+#' @rdname rmd_summary
+#' @export
+rmd_summary.default <- function(object, fmt = c("html", "latex"), digits = 3, resp) {
+  # Want reference levels, do this by looking at original model frame
+  coeff_nms <- tibble::as_tibble(stats::model.frame(object)) %>%
+    dplyr::select(-1) %>%
+    dplyr::summarise(dplyr::across(
+      tidyselect::everything(),
+      function(.x) dplyr::case_when(
+        is.logical(.x) ~ list(c("FALSE", "TRUE")),
+        is.factor(.x) ~ list(levels(.x)),
+        TRUE ~ list("")
+      )
+    )) %>%
+    tidyr::pivot_longer(
+      tidyselect::everything(),
+      names_to = "name1",
+      values_to = "name2"
+    ) %>%
+    tidyr::unnest(.data$name2) %>%
+    tibble::add_row(name1 = "(Intercept)", name2 = "", .before = 1) %>%
+    dplyr::mutate(term = paste0(.data$name1, .data$name2))
+
+  # Add in information provided by broom::tidy()
+  coeff_tb <- dplyr::full_join(
+    coeff_nms,
+    broom::tidy(object, conf.int = TRUE),
+    by = "term"
+  )
+
+  # Temporary function for formatting
+  reformat <- function(x, r = "") ifelse(is.na(x), r, format(x, digits = digits))
+
+  # Return as call to rmd_table
+  coeff_tb %>%
+    dplyr::transmute(
+      Coefficients = ifelse(
+        nchar(.data$name2) > 0,
+        paste0(.data$name1, " (", .data$name2, ")"),
+        .data$term
+      ),
+      Estimate = reformat(.data$estimate, "Ref"),
+      `CI (95%)` = ifelse(
+        is.na(.data$conf.low),
+        "",
+        paste0("(", reformat(.data$conf.low), ", ", reformat(.data$conf.high), ")")
+      ),
+      `Std Error` = reformat(.data$std.error, ""),
+      Statistic = reformat(.data$statistic, ""),
+      P = ifelse(is.na(.data$p.value), "", jcutils::repr_pvals(.data$p.value))
+    ) %>%
+    jcutils::rmd_table(fmt)
+}
+
+#' @rdname rmd_summary
+#' @export
+rmd_summary.mlm <- function(object, fmt = c("html", "latex"), digits = 3, resp) {
+  # Want reference levels, do this by looking at original model frame
+  coeff_nms <- tibble::as_tibble(stats::model.frame(object)) %>%
+    dplyr::select(-1) %>%
+    dplyr::summarise(dplyr::across(
+      tidyselect::everything(),
+      function(.x) dplyr::case_when(
+        is.logical(.x) ~ list(c("FALSE", "TRUE")),
+        is.factor(.x) ~ list(levels(.x)),
+        TRUE ~ list("")
+      )
+    )) %>%
+    tidyr::pivot_longer(
+      tidyselect::everything(),
+      names_to = "name1",
+      values_to = "name2"
+    ) %>%
+    tidyr::unnest(.data$name2) %>%
+    tibble::add_row(name1 = "(Intercept)", name2 = "", .before = 1) %>%
+    dplyr::mutate(term = paste0(.data$name1, .data$name2))
+
+  # Validate response name
+  if (missing(resp)) {
+    stop("Need 'resp' argument for mlm")
+  } else {
+    resp_nm <- grep(resp, as.character(object$terms[[2]]), value = TRUE)
+    if (length(resp_nm) < 1) stop("Couldn't match 'resp' to call")
+    if (length(resp_nm) > 1) stop("Multiple matches of 'resp' in call")
+  }
+
+  # Add in information provided by broom::tidy()
+  coeff_tb <- dplyr::full_join(
+    coeff_nms,
+    broom::tidy(object, conf.int = TRUE) %>%
+      dplyr::filter(.data$response == resp_nm) %>%
+      dplyr::select(-.data$response),
+    by = "term"
+  )
+
+  # Temporary function for formatting
+  reformat <- function(x, r = "") ifelse(is.na(x), r, format(x, digits = digits))
+
+  # Return as call to rmd_table
+  coeff_tb %>%
+    dplyr::transmute(
+      Coefficients = ifelse(
+        nchar(.data$name2) > 0,
+        paste0(.data$name1, " (", .data$name2, ")"),
+        .data$term
+      ),
+      Estimate = reformat(.data$estimate, "Ref"),
+      `CI (95%)` = ifelse(
+        is.na(.data$conf.low),
+        "",
+        paste0("(", reformat(.data$conf.low), ", ", reformat(.data$conf.high), ")")
+      ),
+      `Std Error` = reformat(.data$std.error, ""),
+      Statistic = reformat(.data$statistic, ""),
+      P = ifelse(is.na(.data$p.value), "", jcutils::repr_pvals(.data$p.value))
+    ) %>%
+    jcutils::rmd_table(fmt)
+}
