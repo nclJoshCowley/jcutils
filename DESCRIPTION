@@ -21,10 +21,12 @@ Imports:
     magrittr,
     purrr,
     rlang,
+    rmarkdown,
     tibble,
     tidyr,
     tidyselect
 Suggests:
     broom,
     kableExtra,
+    here,
     testthat
