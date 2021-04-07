@@ -4,11 +4,13 @@
 \alias{rmd_renderer}
 \title{R Markdown Renderer}
 \usage{
-rmd_renderer(name)
+rmd_renderer(name, report_dir)
 }
 \arguments{
 \item{name}{character scalar. This defines the report name that is required
 for consistency. See File Structure for details.}
+
+\item{report_dir}{directory string.}
 }
 \value{
 A function that will render reports in the \verb{output/} directory.

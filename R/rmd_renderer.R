@@ -6,7 +6,7 @@
 #'
 #' @param name character scalar. This defines the report name that is required
 #'   for consistency. See File Structure for details.
-#' @param reports_dir directory string.
+#' @param report_dir directory string.
 #'
 #' @section File Structure:
 #' All reports must be placed in their own folder (of the same name) within
