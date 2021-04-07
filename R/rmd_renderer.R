@@ -6,6 +6,7 @@
 #'
 #' @param name character scalar. This defines the report name that is required
 #'   for consistency. See File Structure for details.
+#' @param reports_dir directory string.
 #'
 #' @section File Structure:
 #' All reports must be placed in their own folder (of the same name) within
@@ -38,19 +39,25 @@
 #'   of which will be passed to `rmarkdown::render`.
 #'
 #' @export
-rmd_renderer <- function(name) {
+rmd_renderer <- function(name, report_dir) {
   force(name)
 
-  # Expect reports to be in following
-  reports_dir <- here::here("inst/reports")
-  if (!dir.exists(reports_dir)) stop("Expected reports to be in inst/reports")
+  # Expect reports to be in following dir
+  if (missing(report_dir)) {
+    rep_dir <- here::here("inst/reports")
+  } else {
+    rep_dir <- report_dir %>%
+      gsub(pattern = "\\\\", replacement = "/") %>%
+      gsub(pattern = "/$", replacement = "")
+  }
+  if (!dir.exists(rep_dir)) stop("Couldn't find directory:\n ", rep_dir)
 
   # Define input Rmd file
-  input <- paste0(reports_dir, "/", name, "/", name, ".Rmd")
+  input <- paste0(rep_dir, "/", name, "/", name, ".Rmd")
   if (!file.exists(input)) stop("Couldn't find file, should be at ", input)
 
   # Define output directory
-  output_dir <- paste0(reports_dir, "/", name, "/output")
+  output_dir <- paste0(rep_dir, "/", name, "/output")
   if (!dir.exists(output_dir)) dir.create(output_dir)
 
   # Return as function
