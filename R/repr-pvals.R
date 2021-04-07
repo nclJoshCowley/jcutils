@@ -17,10 +17,10 @@ repr_pvals <- function(pv, digits = 3) {
 
   dplyr::case_when(
     is.na(pv_rnd) ~ NA_character_,
-    pv_rnd < 0.001 ~ "<0.001***",
-    pv_rnd <= 0.01 ~ paste0(pv_rnd, "**"),
-    pv_rnd <= 0.05 ~ paste0(pv_rnd, "*"),
-    pv_rnd <= 0.10 ~ paste0(pv_rnd, "."),
+    pv_rnd < 0.001 ~ "<0.001 (***)",
+    pv_rnd <= 0.01 ~ paste0(pv_rnd, " (**)"),
+    pv_rnd <= 0.05 ~ paste0(pv_rnd, " (*)"),
+    pv_rnd <= 0.10 ~ paste0(pv_rnd, " (.)"),
     TRUE ~ as.character(pv_rnd)
   )
 }
