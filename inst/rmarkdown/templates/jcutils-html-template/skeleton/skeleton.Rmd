@@ -55,7 +55,7 @@ jcutils::rmd_table(
   fmt = "html",
   digits = 0,
   fixed_thead = TRUE,
-  scroll_h = 200
+  scroll_vert = 200
 )
 ```
 

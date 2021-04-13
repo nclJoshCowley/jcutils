@@ -6,7 +6,7 @@
 #' @param x data.frame. Data to be converted into a table.
 #' @param fmt choice. Is the table to be displayed via HTML ("html")
 #'   or via PDF ("latex").
-#' @param scroll_h numeric. If the format is HTML, create a scroll box of this
+#' @param scroll_vert numeric. If the format is HTML, create a scroll box of this
 #'   height (in pixels)
 #' @param ... extra arguments to be passed to either `kableExtra::kbl`
 #'   or `kableExtra::kable_styling`
@@ -17,16 +17,16 @@
 #' @return Either a HTML table or LaTeX table, depending on format.
 #'
 #' @export
-rmd_table <- function(x, fmt = c("html", "latex"), scroll_h = NULL, ...) {
+rmd_table <- function(x, fmt = c("html", "latex"), scroll_vert = NULL, ...) {
   # Parse arguments
   fmt <- match.arg(fmt)
   dots <- list(...)
 
   # Validation
   stopifnot("'x' should inherit from data.frame" = inherits(x, "data.frame"))
-  if (!is.null(scroll_h)) {
+  if (!is.null(scroll_vert)) {
     if (fmt == "latex") stop("Scroll box in HTML only.")
-    if (!is.numeric(scroll_h)) stop("Scroll box argument should be numeric.")
+    if (!is.numeric(scroll_vert)) stop("Scroll box argument should be numeric.")
   }
 
   # Obtain (modified) default arguments
@@ -76,8 +76,8 @@ rmd_table <- function(x, fmt = c("html", "latex"), scroll_h = NULL, ...) {
 
   # Return with option scroll box (vertical only)
   out <- eval(call_kblstyle, rlang::env(booktabs = TRUE))
-  if (!is.null(scroll_h)) {
-    kableExtra::scroll_box(out, width = "100%", height = paste0(scroll_h, "px"))
+  if (!is.null(scroll_vert)) {
+    kableExtra::scroll_box(out, width = "100%", height = paste0(scroll_vert, "px"))
   } else {
     out
   }

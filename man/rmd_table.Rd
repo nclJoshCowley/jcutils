@@ -4,7 +4,7 @@
 \alias{rmd_table}
 \title{Nice Table in R Markdown.}
 \usage{
-rmd_table(x, fmt = c("html", "latex"), scroll_h = NULL, ...)
+rmd_table(x, fmt = c("html", "latex"), scroll_vert = NULL, ...)
 }
 \arguments{
 \item{x}{data.frame. Data to be converted into a table.}
@@ -12,7 +12,7 @@ rmd_table(x, fmt = c("html", "latex"), scroll_h = NULL, ...)
 \item{fmt}{choice. Is the table to be displayed via HTML ("html")
 or via PDF ("latex").}
 
-\item{scroll_h}{numeric. If the format is HTML, create a scroll box of this
+\item{scroll_vert}{numeric. If the format is HTML, create a scroll box of this
 height (in pixels)}
 
 \item{...}{extra arguments to be passed to either \code{kableExtra::kbl}

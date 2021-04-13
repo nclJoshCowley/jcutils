@@ -27,5 +27,5 @@ test_that("function accepts arguments passed to kable_styling()", {
 })
 
 test_that("Scroll bar in LaTeX throws error", {
-  expect_error(jcutils::rmd_table(x, fmt = "latex", scroll_h = 200))
+  expect_error(jcutils::rmd_table(x, fmt = "latex", scroll_vert = 200))
 })
