@@ -12,6 +12,12 @@ params:
   session_info: TRUE
 ---
 
+```{r, setup-pkgs, include = FALSE}
+# https://github.com/nclJoshCowley/jcutils
+library(jcutils)
+data("testdata", package = "jcutils")
+```
+
 ```{r, setup-execution, include = FALSE}
 # Set seed for consistent output
 set.seed(params$seed)
@@ -32,10 +38,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, setup-packages, include = FALSE}
-library(jcutils)
-data("testdata", package = "jcutils")
-```
 
 
 # Example Heading
