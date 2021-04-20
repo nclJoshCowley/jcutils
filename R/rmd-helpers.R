@@ -182,9 +182,12 @@ rmd_summary.mlm <- function(object, fmt = c("html", "latex"), digits = 3, resp) 
   if (missing(resp)) {
     stop("Need 'resp' argument for mlm")
   } else {
-    resp_nm <- grep(resp, as.character(object$terms[[2]]), value = TRUE)
-    if (length(resp_nm) < 1) stop("Couldn't match 'resp' to call")
-    if (length(resp_nm) > 1) stop("Multiple matches of 'resp' in call")
+    # [ISSUE]
+    # resp_nm <- grep(resp, as.character(object$terms[[2]]), value = TRUE)
+    # if (length(resp_nm) < 1) stop("Couldn't match 'resp' to call")
+    # if (length(resp_nm) > 1) stop("Multiple matches of 'resp' in call")
+    # [HOTFIX]
+    resp_nm <- resp
   }
 
   # Add in information provided by broom::tidy()
