@@ -26,6 +26,7 @@ Imports:
     tidyr,
     tidyselect
 Suggests:
+    bibtex,
     broom,
     kableExtra,
     here,
