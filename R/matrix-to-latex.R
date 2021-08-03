@@ -15,9 +15,9 @@ matrix_to_latex <- function(x, envir = "pmatrix") {
   x_by_row <- apply(x, 1, paste, collapse = " & ")
 
   x_tex <- paste0(
-    "\\\\begin{", envir, "}\n  ",
+    "\\begin{", envir, "}\n  ",
     paste0(x_by_row, collapse = " \\\\ \n  "),
-    "\n\\\\end{", envir, "}"
+    "\n\\end{", envir, "}"
   )
 
   x_tex
