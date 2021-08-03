@@ -13,38 +13,64 @@
 #'
 #' @export
 collate_bibtex <- function(path, file = "references.bib", overwrite = FALSE) {
-  # Load any .bib file
-  bib_files <- list.files(
-    path = path,
-    pattern = "*.bib",
-    recursive = TRUE,
-    full.names = TRUE
-  )
-
   # Remove file marked for overwrite
-  if (file.exists(file) & overwrite) file.remove(file)
+  if (file.exists(file) & overwrite) unlink(file)
+  stopifnot("'file' already exists" = !file.exists(file))
 
-  # Sanity check
-  stopifnot(
-    "Couldn't find any '*.bib' files" = (length(bib_files) > 0),
-    "'file' already exists" = !file.exists(file)
+  # Load any .bib file
+  bib_db <- data.frame(
+    files = list.files(
+      path = path,
+      pattern = "*.bib",
+      recursive = TRUE,
+      full.names = TRUE
+    )
   )
+  stopifnot("Couldn't find any '*.bib' files" = (length(bib_db$files) > 0))
 
-  # Remove duplicate entries
-  single_bibentry <- unique(
-    do.call(c, lapply(bib_files, bibtex::read.bib))
+  # Parse bib entries as a warning system for invalid files
+  withCallingHandlers(
+    warning = function(cnd) {
+      stop(
+        "Couldn't parse .bib files for following reasons:\n",
+        cnd,
+        call. = FALSE
+      )
+    },
+    bib_db$entry <- lapply(bib_db$files, bibtex::read.bib)
   )
 
   # Warn over duplicate keys
-  if (length(single_bibentry) > length(unique(single_bibentry$key))) {
-    dup_keys <- paste0(
-      single_bibentry$key[duplicated(single_bibentry$key)],
-      collapse = "\n- "
+  all_keys <- unlist(lapply(bib_db$entry, function(x) x$key))
+  if (anyDuplicated(all_keys)) {
+    dup_keys <- all_keys %in% all_keys[duplicated(all_keys)]
+    warning(
+      "Found duplicated keys.\n ",
+      paste0(all_keys[dup_keys], collapse = "\n "),
+      call. = FALSE
     )
-    warning("Found duplicate keys:\n- ", dup_keys, call. = FALSE)
   }
 
-  # Write to file and return silently
-  bibtex::write.bib(single_bibentry, file = file, append = TRUE)
-  invisible(single_bibentry)
+  # To keep encoding and comments, join all files as text files
+  raw_text <- paste0(
+    unlist(lapply(
+      bib_db$files,
+      function(.x) paste0(readLines(.x, warn = FALSE), collapse = "\n")
+    )),
+    collapse = "\r\n\n"
+  )
+
+  writeLines(
+    paste0(
+      "% Generated using Collate-references.R. Do not edit by hand.\r\n\n",
+      raw_text
+    ),
+    "references.bib"
+  )
 }
+
+
+
+
+
+
