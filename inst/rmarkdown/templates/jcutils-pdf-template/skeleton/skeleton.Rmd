@@ -13,13 +13,13 @@ params:
   session_info: TRUE
 ---
 
-```{r, setup-pkgs, include = FALSE}
+```{r setup-pkgs, include = FALSE}
 # https://github.com/nclJoshCowley/jcutils
 library(jcutils)
 data("testdata", package = "jcutils")
 ```
 
-```{r, setup-plot-defaults, include = FALSE}
+```{r setup-plot-defaults, include = FALSE}
 ggplot2::theme_set(ggplot2::theme_minimal(base_size = 22))
 knitr::opts_chunk$set(
   fig.width = 12,
@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, setup-execution, include = FALSE}
+```{r setup-execution, include = FALSE}
 # Set seed for consistent output
 set.seed(params$seed)
 
@@ -46,7 +46,7 @@ knitr::opts_chunk$set(
 
 Consider the following example data.
 
-```{r, chunk-name}
+```{r chunk-name}
 testdata %>%
   dplyr::select(
     .data$resp_lp2,
@@ -62,7 +62,7 @@ testdata %>%
 
 
 `r if(params$session_info) {"\\newpage # Session Info {-}"}`
-```{r, session-info, eval = params$session_info}
+```{r session-info, eval = params$session_info}
 knitr::asis_output("Document created:")
 print(lubridate::now("gmt"), "GMT")
 
