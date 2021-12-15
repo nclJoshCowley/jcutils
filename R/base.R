@@ -26,6 +26,35 @@ chol_solve <- function(x, tol = 100 * .Machine$double.eps) {
 }
 
 
+#' Format P Values with suffix
+#'
+#' Convert p-values to an interpretable character vector with suffix shown in
+#'   details.
+#'
+#' @param x numeric. Values to be converted.
+#' @param ... extra arguments passed to \code{\link[base]{format}}.
+#'
+#' @details Suffix based on widely used:
+#'   "\code{Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1}"
+#'
+#' @seealso \code{\link[base]{format.pval}} (no suffix).
+#'
+#' @export
+format_p_values <- function(x, ...) {
+  stopifnot("Some p-values not in (0,1)" = all(x >= 0 & x <= 1, na.rm = TRUE))
+
+  pvalsf <- format(x, ...)
+
+  dplyr::case_when(
+    pvalsf < 0.001 ~ "<0.001 (***)",
+    pvalsf <= 0.01 ~ paste0(pvalsf, " (**)"),
+    pvalsf <= 0.05 ~ paste0(pvalsf, " (*)"),
+    pvalsf <= 0.10 ~ paste0(pvalsf, " (.)"),
+    TRUE ~ as.character(pvalsf)
+  )
+}
+
+
 #' Range Expander
 #'
 #' Modifies the output of \code{\link[base]{range}} to stretch or shrink.
