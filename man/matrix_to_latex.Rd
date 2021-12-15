@@ -2,21 +2,20 @@
 % Please edit documentation in R/matrix-to-latex.R
 \name{matrix_to_latex}
 \alias{matrix_to_latex}
-\title{Convert Matrix Object to LaTeX Code}
+\title{Convert Matrix Object to LaTeX}
 \usage{
-matrix_to_latex(x, envir = "pmatrix")
+matrix_to_latex(x, digits, envir = "pmatrix")
 }
 \arguments{
 \item{x}{object to be converted.}
 
-\item{envir}{character. The environment the matrix will be surrounded by.
-Defaults to \verb{\\\\begin\{pmatrix\}  \\\\end\{pmatrix\}}.}
+\item{envir}{character. LaTeX matrix style,
+see \url{https://www.overleaf.com/learn/latex/Matrices}.}
 }
 \value{
-a character is returned that produces the intended formatting when
-it is passed to \code{cat()} or \code{writeLines()}.
+character that produces the intended formatting when passed
+to \code{\link[base]{cat}} or \code{\link[knitr]{asis_output}}.
 }
 \description{
-Will take a matrix (numeric or character) and produce code that can be
-placed into a .TeX document.
+Convert matrix to a (LaTeX) string to be printed "asis".
 }

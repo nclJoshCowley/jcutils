@@ -1,24 +1,24 @@
-#' Convert Matrix Object to LaTeX Code
+#' Convert Matrix Object to LaTeX
 #'
-#' Will take a matrix (numeric or character) and produce code that can be
-#'   placed into a .TeX document.
+#' Convert matrix to a (LaTeX) string to be printed "asis".
 #'
 #' @param x object to be converted.
-#' @param envir character. The environment the matrix will be surrounded by.
-#'   Defaults to `\\begin{pmatrix}  \\end{pmatrix}`.
+#' @param envir character. LaTeX matrix style,
+#'   see <https://www.overleaf.com/learn/latex/Matrices>.
 #'
-#' @return a character is returned that produces the intended formatting when
-#'   it is passed to `cat()` or `writeLines()`.
+#' @return character that produces the intended formatting when passed
+#'   to \code{\link[base]{cat}} or \code{\link[knitr]{asis_output}}.
 #'
 #' @export
-matrix_to_latex <- function(x, envir = "pmatrix") {
-  x_by_row <- apply(x, 1, paste, collapse = " & ")
+matrix_to_latex <- function(x, digits, envir = "pmatrix") {
+  x <- format(x, digits = digits)
+  rstrings <- apply(x, 1, paste, collapse = " & ")
 
-  x_tex <- paste0(
-    "\\begin{", envir, "}\n  ",
-    paste0(x_by_row, collapse = " \\\\ \n  "),
-    "\n\\end{", envir, "}"
-  )
+  body <- paste0(rstrings, collapse = " \\\\ \n    ")
+  body <- paste0("    ", body)
 
-  x_tex
+  head <- paste0("\\begin{", envir, "}")
+  foot <- paste0("\\end{", envir, "}")
+
+  paste0(c(head, body, foot), collapse = "\n")
 }
