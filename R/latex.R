@@ -1,8 +1,13 @@
+# -------------------------------------------------------------------------|
+# Utilities that provide interface between R and LaTeX.
+# -------------------------------------------------------------------------|
+
 #' Convert Matrix Object to LaTeX
 #'
 #' Convert matrix to a (LaTeX) string to be printed "asis".
 #'
 #' @param x object to be converted.
+#' @param digits numeric. Rounding value for better value display.
 #' @param envir character. LaTeX matrix style,
 #'   see <https://www.overleaf.com/learn/latex/Matrices>.
 #'
