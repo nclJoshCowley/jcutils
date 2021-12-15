@@ -7,6 +7,9 @@ Deprecated in favour of \code{\link{format_p_values}}.}
 \usage{
 repr_pvals(pv, digits = 3)
 }
+\arguments{
+\item{pv, digits}{N/A.}
+}
 \description{
 Representation of p-values
 Deprecated in favour of \code{\link{format_p_values}}.

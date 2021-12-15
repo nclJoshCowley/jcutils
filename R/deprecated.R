@@ -1,5 +1,6 @@
 #' Representation of p-values
 #' Deprecated in favour of \code{\link{format_p_values}}.
+#' @param pv,digits N/A.
 #' @export
 repr_pvals <- function(pv, digits = 3) {
   .Deprecated(
