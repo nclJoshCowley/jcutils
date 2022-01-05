@@ -1,0 +1,67 @@
+---
+title: "Knitr (Plot) Hook - 'only'"
+author: Josh Cowley
+date: January 5, 2022
+output: beamer_presentation
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(fig.width = 6, out.width = "100%", fig.asp = 0.65)
+
+local({
+  default_hook <- knitr::knit_hooks$get("plot")
+  
+  knitr::knit_hooks$set(plot = function(x, options) {
+    # Used to convert R plots to LaTeX or Md
+    default_output <- default_hook(x, options)
+    
+    # Lack of 'only' option? Change nothing
+    if (is.null(options$only)) return(default_output)
+    
+    # Otherwise, add in '\only<i>{ ... }'
+    stopifnot("'Only' should be numeric" = is.numeric(options$only))
+    return(sprintf("\\only<%i>{%s}", options$only, default_output))
+  })
+})
+```
+
+
+# Text staging
+
+Text can be delayed easily. This text appears on all versions of this slide.
+
+\only<1>{Nice text 1}
+
+\only<2>{Nice text 2}
+
+\only<3>{Nice text 3}
+
+# Image staging
+
+Images are more difficult. This text appears on all versions of this slide.
+
+```{r plot-1, echo = FALSE, only = 1}
+plot(mtcars$mpg, mtcars$disp)
+```
+
+```{r plot-2, echo = FALSE, only = 2}
+plot(mtcars$mpg, mtcars$hp)
+```
+
+```{r plot-3, echo = FALSE, only = 3}
+plot(mtcars$mpg, mtcars$wt)
+```
+
+# Verify other plots work as usual
+
+Each plot gets it own slides and this text is only associated with Sepal plot.
+
+```{r plot-a, echo = FALSE}
+plot(iris$Sepal.Length, iris$Sepal.Width)
+```
+
+---
+
+```{r plot-b, echo = FALSE}
+plot(iris$Petal.Length, iris$Petal.Width)
+```
