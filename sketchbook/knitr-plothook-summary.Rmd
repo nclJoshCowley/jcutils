@@ -1,41 +1,29 @@
 ---
 title: "Knitr (Plot) Hook - 'summary'"
 author: Josh Cowley
-date: January 5, 2022
+date: January 6, 2022
 output: html_document
 ---
 
 ```{r include = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 
-knitr::knit_hooks$set(
-  collapse = function(before, options, envir) {
-    if (before) {
-      stopifnot(knitr::is_html_output())
-      pre_text <- sprintf("<details><summary>%s</summary>\n", options$summary)
-      knitr::asis_output(pre_text)
-    } else {
-      knitr::asis_output("</details>")
-    }
-  }
-)
+knitr::knit_hooks$set(summary = jcutils::knit_hook_summary)
 ```
 
-# Output Types
-
-## Plot
+# Plot
 
 ```{r plot, summary = "This hides a plot"}
 plot(mtcars$mpg, mtcars$disp)
 ```
 
-## Text
+# Text
 
 ```{r text, summary = "This hides text"}
 print("Hidden text!")
 ```
 
-## Code
+# Code
 
 ```{r code, results = "asis", summary = "This hides code"}
 cat(
@@ -48,3 +36,8 @@ cat(
 )
 ```
 
+# Session Info
+
+```{r sessionInfo, summary = "Hide session information"}
+sessionInfo()
+```
