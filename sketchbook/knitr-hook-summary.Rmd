@@ -1,5 +1,5 @@
 ---
-title: "Knitr (Plot) Hook - 'summary'"
+title: "Knit Hook - 'summary'"
 author: Josh Cowley
 date: January 6, 2022
 output: html_document
