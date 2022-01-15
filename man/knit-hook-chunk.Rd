@@ -5,20 +5,25 @@
 \alias{knit_hook_summary}
 \title{Knit (Chunk) Hooks}
 \usage{
-knitr::knit_hooks$set(NAME = knit_hook_*)
-
 knit_hook_summary(before, options, envir)
 }
 \arguments{
 \item{before, options, envir}{required arguments.}
 }
 \description{
-Knit (chunk) hooks allow code to be ran before and after the execution of
-code chunks, see \url{https://yihui.org/knitr/hooks} for more information.
+Knit (chunk) hooks to be ran before and after the execution of code chunks.
 }
 \section{Functions}{
 \itemize{
 \item \code{knit_hook_summary}: Hide content inside of \code{<details><summary> ...} where the summary text
 is the value of the chunk option.
 }}
+
+\section{Knitr}{
+
+To use any of these functions. use the following in a R markdown document:\preformatted{knitr::knit_hooks$set(NAME = knit_hook_*)
+}
+
+See \url{https://yihui.org/knitr/hooks} for more information.
+}
 

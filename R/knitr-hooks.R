@@ -1,9 +1,13 @@
 #' Knit (Chunk) Hooks
 #'
-#' Knit (chunk) hooks allow code to be ran before and after the execution of
-#'   code chunks, see \url{https://yihui.org/knitr/hooks} for more information.
+#' Knit (chunk) hooks to be ran before and after the execution of code chunks.
 #'
-#' @usage knitr::knit_hooks$set(NAME = knit_hook_*)
+#' @section Knitr:
+#'   To use any of these functions. use the following in a R markdown document:
+#'   ```
+#'   knitr::knit_hooks$set(NAME = knit_hook_*)
+#'   ```
+#'   See \url{https://yihui.org/knitr/hooks} for more information.
 #'
 #' @param before,options,envir required arguments.
 #'
