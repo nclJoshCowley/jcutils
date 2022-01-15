@@ -2,23 +2,20 @@
 % Please edit documentation in R/bibtex.R
 \name{collate_bibtex}
 \alias{collate_bibtex}
-\title{Collate BibTeX Entries}
+\title{Collate BibTeX Databases}
 \usage{
-collate_bibtex(path, file = "references.bib", overwrite = FALSE)
+collate_bibtex(path = ".")
 }
 \arguments{
-\item{path}{character. The directory (and sub-directories) to search
-for .bib files}
-
-\item{file}{output Bibtex file.}
-
-\item{overwrite}{logical. If TRUE, replaces 'file', if it already exists.}
+\item{path}{character. The directory to search recursively for .bib files.}
 }
 \value{
-(invisible) An object of class "bibentry",
-containing all found references.
+\code{\link[RefManageR]{BibEntry}}.
 }
 \description{
 Simple function that will find all .bib files in a directory and combine them
-into a single .bib file.
+into a single \code{BibEntry} object.
+}
+\seealso{
+\code{\link[RefManageR]{ReadBib}}.
 }
