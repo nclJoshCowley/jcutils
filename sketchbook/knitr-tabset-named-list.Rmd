@@ -1,9 +1,8 @@
 ---
-title: "Tabset Images"
+title: "Tabset Via Named List"
 author: "Josh Cowley"
 output:
   html_document:
-    keep_md: true
     number_sections: true
     toc: true
     toc_depth: 2
@@ -63,6 +62,11 @@ We want a function to re-create this, arguments needed are
 
 ```{r}
 fn <- function(x, level, id = "id") {
+  if (!knitr::is_html_output()) {
+    warning("Not HTML output, exiting early")
+    return(invisible(NULL))
+  }
+  
   if (!is.list(x) | is.null(names(x))) stop("'x' should be a named list")
   arg_name <- deparse(substitute(x))
   
@@ -104,5 +108,13 @@ fn(plts, 2, id = "initial")
 ## Defaults {.tabset}
 
 ```{r results = "asis"}
-fn(plts, 3, id = "new")
+fn(plts, 3, id = "new1")
+```
+
+## Wide x-axis {.tabset}
+
+```{r results = "asis"}
+plts %>%
+  purrr::map(~ .x + ggplot2::expand_limits(x = c(0, 20))) %>%
+  fn(3, id = "new2")
 ```
