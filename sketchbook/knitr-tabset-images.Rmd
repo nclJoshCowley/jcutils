@@ -25,6 +25,11 @@ library(knitr)
 Create a list of `ggplot`(s).
 
 ```{r}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  fig.asp = 0.8
+)
+
 nms <- c("Sepal.Width", "Petal.Length", "Petal.Width")
 
 p_all <- 
@@ -57,50 +62,39 @@ knitr::include_graphics(knitr::fig_chunk("plot-lbl", "png", 1))
 We want a function to re-create this, arguments needed are 
 
 ```{r}
-fn <- function(x) {
-  arg_name <- rlang::enexpr(x)
-  chunk_name <- paste0("tabplot-", arg_name)
+fn <- function(x, level) {
+  if (!is.list(x) | is.null(names(x))) stop("'x' should be a named list")
+  arg_name <- deparse(substitute(x))
   
-  glue_ <- function(...) {
-    glue::glue(..., .sep = "\n", .open = "<<", .close = ">>")
-  }
+  if (missing(level)) stop("Heading 'level' argument required")
+  hn <- paste(rep("#", level), collapse = "")
   
-  chunk_create <- 
-    glue_(
-      "```{r <<chunk_name>>, fig.show = 'hide', results = 'hide'}",
-      "<<arg_name>>",
-      "```"
-    )
-  
-  chunk_tabs <- 
-    purrr::imap(names(x), function(.nm, .i) {
-      fig_filepath <- 
-        glue_(
-          "knitr::fig_chunk('<<chunk_name>>', 'png', <<.i>>)",
-          .envir = rlang::current_env()
+  src <- 
+    purrr::map(names(x), function(.nm) {
+      knitr::knit_expand(
+        text = paste(
+          "{{hn}} {{.nm}} \n",
+          "```{r {{arg_name}}-tab-{{.nm}}}",
+          "x${{.nm}}",
+          "``` \n\n",
+          sep = "\n"
         )
-      
-      glue_(
-        "## <<.nm>>",
-        "",
-        "```{r <<chunk_name>>-<<.nm>>}",
-        # "<<arg_name>>[[<<.i>>]]", # This seems to work, making fig_filepath unneeded.
-        "knitr::include_graphics(<<fig_filepath>>)",
-        "```",
-        .envir = rlang::current_env()
       )
     })
   
-  src = sprintf("%s\n\n%s", chunk_create, paste0(chunk_tabs, collapse = "\n\n"))
-  res = knitr::knit_child(text = src, quiet = TRUE)
-  cat(res, sep = "\n")
+  res <- 
+    knitr::knit_child(
+      text = unlist(src),
+      envir = rlang::current_env(),
+      quiet = TRUE
+    )
   
-  # invisible(res)
+  cat(res, sep = "\n")
 }
 ```
 
 # Tabs? {.tabset}
 
 ```{r, results = "asis"}
-fn(plts)
+fn(plts, 2)
 ```
