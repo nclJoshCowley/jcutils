@@ -1,0 +1,106 @@
+---
+title: "Tabset Images"
+author: "Josh Cowley"
+output:
+  html_document:
+    keep_md: true
+    number_sections: true
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+params:
+  session_info: TRUE
+---
+
+```{r setup, include = FALSE}
+library(purrr)
+library(ggplot2)
+library(magrittr)
+library(knitr)
+```
+
+# Setup
+
+Create a list of `ggplot`(s).
+
+```{r}
+nms <- c("Sepal.Width", "Petal.Length", "Petal.Width")
+
+p_all <- 
+  ggplot2::ggplot(
+    iris,
+    ggplot2::aes(x = .data$Sepal.Length, col = .data$Species)
+  )
+
+plts <- 
+  purrr::set_names(as.list(nms)) %>%
+  purrr::map(~ p_all + ggplot2::geom_point(ggplot2::aes_string(y = .x))) 
+```
+
+Define a chunk to create plots but hide them
+
+```{r plot-lbl, fig.show = "hide", results = "hide"}
+plts
+```
+
+# Show Plots
+
+Programmatically, we can do this, looping over each number
+
+```{r}
+knitr::include_graphics(knitr::fig_chunk("plot-lbl", "png", 1))
+```
+
+# Function
+
+We want a function to re-create this, arguments needed are 
+
+```{r}
+fn <- function(x) {
+  arg_name <- rlang::enexpr(x)
+  chunk_name <- paste0("tabplot-", arg_name)
+  
+  glue_ <- function(...) {
+    glue::glue(..., .sep = "\n", .open = "<<", .close = ">>")
+  }
+  
+  chunk_create <- 
+    glue_(
+      "```{r <<chunk_name>>, fig.show = 'hide', results = 'hide'}",
+      "<<arg_name>>",
+      "```"
+    )
+  
+  chunk_tabs <- 
+    purrr::imap(names(x), function(.nm, .i) {
+      fig_filepath <- 
+        glue_(
+          "knitr::fig_chunk('<<chunk_name>>', 'png', <<.i>>)",
+          .envir = rlang::current_env()
+        )
+      
+      glue_(
+        "## <<.nm>>",
+        "",
+        "```{r <<chunk_name>>-<<.nm>>}",
+        # "<<arg_name>>[[<<.i>>]]", # This seems to work, making fig_filepath unneeded.
+        "knitr::include_graphics(<<fig_filepath>>)",
+        "```",
+        .envir = rlang::current_env()
+      )
+    })
+  
+  src = sprintf("%s\n\n%s", chunk_create, paste0(chunk_tabs, collapse = "\n\n"))
+  res = knitr::knit_child(text = src, quiet = TRUE)
+  cat(res, sep = "\n")
+  
+  # invisible(res)
+}
+```
+
+# Tabs? {.tabset}
+
+```{r, results = "asis"}
+fn(plts)
+```
