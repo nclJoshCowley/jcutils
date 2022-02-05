@@ -1,0 +1,83 @@
+---
+title: "Tabset Via Named List"
+author: "Josh Cowley"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+params:
+  session_info: TRUE
+---
+
+```{r setup, include = FALSE}
+library(purrr)
+library(ggplot2)
+library(magrittr)
+library(knitr)
+```
+
+# Setup
+
+Create a list of `ggplot`(s).
+
+```{r}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  fig.asp = 0.8
+)
+
+nms <- c("Sepal.Width", "Petal.Length", "Petal.Width")
+
+p_all <- 
+  ggplot2::ggplot(
+    iris,
+    ggplot2::aes(x = .data$Sepal.Length, col = .data$Species)
+  )
+
+plts <- 
+  purrr::set_names(as.list(nms)) %>%
+  purrr::map(~ p_all + ggplot2::geom_point(ggplot2::aes_string(y = .x))) 
+```
+
+Define a chunk to create plots but hide them
+
+```{r plot-lbl, fig.show = "hide", results = "hide"}
+plts
+```
+
+# Show Plots
+
+Programmatically, we can do this, looping over each number
+
+```{r}
+knitr::include_graphics(knitr::fig_chunk("plot-lbl", "png", 1))
+```
+
+# Function
+
+We want a function to re-create this, arguments needed are 
+
+# Tabs {.tabset}
+
+```{r results = "asis"}
+jcutils::list_to_html_tabset(plts, level = 2, id = "initial")
+```
+
+# Nested tabs ? {.tabset}
+
+## Defaults {.tabset}
+
+```{r results = "asis"}
+jcutils::list_to_html_tabset(plts, level = 3, id = "new1")
+```
+
+## Wide x-axis {.tabset}
+
+```{r results = "asis"}
+plts %>%
+  purrr::map(~ .x + ggplot2::expand_limits(x = c(0, 20))) %>%
+  jcutils::list_to_html_tabset(level = 3, id = "new2")
+```
