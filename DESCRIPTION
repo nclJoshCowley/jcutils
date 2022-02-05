@@ -29,6 +29,8 @@ Imports:
 Suggests:
     broom,
     kableExtra,
+    knitrProgressBar,
     here,
     RefManageR,
+    rjags,
     testthat
