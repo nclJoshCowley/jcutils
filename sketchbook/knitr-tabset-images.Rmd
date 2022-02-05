@@ -62,7 +62,7 @@ knitr::include_graphics(knitr::fig_chunk("plot-lbl", "png", 1))
 We want a function to re-create this, arguments needed are 
 
 ```{r}
-fn <- function(x, level) {
+fn <- function(x, level, id = "id") {
   if (!is.list(x) | is.null(names(x))) stop("'x' should be a named list")
   arg_name <- deparse(substitute(x))
   
@@ -74,7 +74,7 @@ fn <- function(x, level) {
       knitr::knit_expand(
         text = paste(
           "{{hn}} {{.nm}} \n",
-          "```{r {{arg_name}}-tab-{{.nm}}}",
+          "```{r tabs-{{id}}-{{arg_name}}-{{.nm}}}",
           "x${{.nm}}",
           "``` \n\n",
           sep = "\n"
@@ -93,8 +93,16 @@ fn <- function(x, level) {
 }
 ```
 
-# Tabs? {.tabset}
+# Tabs {.tabset}
 
-```{r, results = "asis"}
-fn(plts, 2)
+```{r results = "asis"}
+fn(plts, 2, id = "initial")
+```
+
+# Nested tabs ? {.tabset}
+
+## Defaults {.tabset}
+
+```{r results = "asis"}
+fn(plts, 3, id = "new")
 ```
