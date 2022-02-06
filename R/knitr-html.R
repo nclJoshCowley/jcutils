@@ -27,7 +27,7 @@ list_to_html_tabset <- function(x, level, id = "id") {
         text = paste(
           "{{hn}} {{.nm}} \n",
           "```{r tabs-{{id}}-{{arg_name}}-{{.nm}}}",
-          "x${{.nm}}",
+          "x$`{{.nm}}`",
           "``` \n\n",
           sep = "\n"
         )
