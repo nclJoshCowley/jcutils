@@ -24,3 +24,4 @@ model <-
 
 variable.names <- c("mu", "tau", "pred", "pred_matrix")
 n.iter <- 40
+thin <- 1
