@@ -1,142 +1,97 @@
-#' JAGS Samples with Progress Bar
+#' Knitr Friendly Version of `jags.samples()`
 #'
-#' \code{\link[rjags]{jags.samples}} default progress bar will not work when
-#'   `interactive()` returns `FALSE`. This method uses the `knitrProgressBar`
-#'   package with many `jags.samples()` calls.
+#' Modified version of \code{\link[rjags]{jags.samples}} that incorporates
+#'   [https://rmflight.github.io/knitrProgressBar/]{knitrProgressBar}.
 #'
+#' @param type Argument not implemented, default "trace" assumed.
 #' @inheritParams rjags::jags.samples
-#' @param n.update integer. Number of (unsaved) warn-up iterations.
+#'
+#' @details
+#'   In the source code of \code{\link[rjags]{jags.samples}} and the
+#'   \code{\link[rjags]{update}}, a progress bar is called only if
+#'   `interactive()` returns `TRUE`.
+#'
+#'   This is not the case for Rmarkdown documents among other scenarios, hence
+#'   we modify the source code to display a different progress bar.
+#'
+#' @seealso \code{\link[rjags]{jags.samples}} and its source code.
 #'
 #' @export
-jags_samples_with_pb <- function(model, variable.names, n.iter, n.update, thin) {
-  # Define **alternate** progress bar
-  steps <- min(100, n.iter)
-  pb <- knitrProgressBar::progress_estimated(steps)
+jags_samples_in_knitr <- function(model, variable.names, n.iter, thin) {
+  # Validation
+  stopifnot(
+    "Invalid JAGS model" =
+      inherits(model, "jags"),
 
-  # Define trace start and end points
-  ends <- cumsum(rep(floor(n.iter / steps), steps))
-  ends[length(ends)] <- n.iter
-  starts <- 1 + c(0, utils::head(ends, -1))
+    "variable.names must be a character vector" =
+      (is.character(variable.names) & length(variable.names) > 0),
 
-  # Run the sampler to get dimensions
-  warmup_samples <-
-    rjags::jags.samples(
-      model,
-      variable.names,
-      thin,
-      n.iter = 100,
-      type = "trace",
-      quiet = TRUE,
-      progress.bar = "none"
-    )
-  vardims <- purrr::map(warmup_samples, ~ utils::head(dim(.x), -2))
-  rm(warmup_samples)
+    "n.iter must be a positive integer" =
+      (is.numeric(n.iter) & (length(n.iter) == 1) & (n.iter > 0)),
 
-  # Output to be same as usual jags.samples() call
-  out <- list()
-  for (varnm in variable.names) {
-    dims_attr <-
-      c(
-        vardims[[varnm]],
-        iteration = n.iter,
-        chain = model$nchain()
-      )
+    "thin must be a positive integer" =
+      (is.numeric(thin) & (length(thin) == 1) & (thin > 0))
+  )
 
-    iterations_attr <-
-      c(
-        start = model$iter() + starts[1],
-        end = model$iter() + ends[length(ends)],
-        thin = thin
-      )
+  startiter <- model$iter()
+  n.iter <- n.iter - n.iter %% thin
 
-    out[[varnm]] <-
-      structure(
-        array(data = NA, dim = dims_attr),
-        class = "mcarray",
-        varname = varnm,
-        type = "trace",
-        iterations = iterations_attr
-      )
-  }
+  # Initialise progress bar to work in knitr
+  steps <- n.iter / thin
+  pb <- knitrProgressBar::progress_estimated(steps + 1)
+  knitrProgressBar::update_progress(pb)
 
-  # Loop through
-  for(i in seq_along(starts)) {
-    # Run JAGS
-    cur_samples <-
-      rjags::jags.samples(
-        model,
-        variable.names,
-        thin,
-        n.iter = (ends[i] + 1) - starts[i],
-        type = "trace",
-        quiet = TRUE,
-        progress.bar = "none"
-      )
+  # Code simplified by only allowing type = "trace"
+  type <- "trace"
+  pn <- parse.varnames(variable.names)
 
-    # Save into object to be output
-    for (varnm in names(out)) {
-      out[[varnm]] <-
-        assign_iterations_mcarray(
-          out[[varnm]],
-          cur_samples[[varnm]],
-          at = seq(starts[i], ends[i])
-        )
-    }
+  # Set up monitors
+  status <- .Call("set_monitors", model$ptr(), pn$names, pn$lower, pn$upper,
+                  as.integer(thin), type, PACKAGE = "rjags")
+  if (!any(status)) stop("No valid monitors set")
 
-    # Update progress bar
+  # Update per step
+  for (. in seq_len(steps)) {
+    stats::update(model, n.iter / steps, progress.bar = "none")
     knitrProgressBar::update_progress(pb)
   }
 
-  return(out)
+  # Obtain and post-process monitors
+  ans <- .Call("get_monitored_values", model$ptr(), type, PACKAGE = "rjags")
+
+  for (i in seq_along(ans)) {
+    class(ans[[i]]) <- "mcarray"
+    attr(ans[[i]], "varname") <- names(ans)[i]
+
+    # Assure there is a valid dim attribute for pooled scalar nodes:
+    if(is.null(dim(ans[[i]]))) dim(ans[[i]]) <- length(ans[[i]])
+
+    # New attributes for rjags_4-7:
+    attr(ans[[i]], "type") <- type
+    attr(ans[[i]], "iterations") <-
+      c(
+        start = startiter + thin,
+        end = startiter + n.iter,
+        thin=thin
+      )
+  }
+
+  # Clear any monitors
+  for (i in seq_along(variable.names)) {
+    if (status[i]) {
+      .Call("clear_monitor", model$ptr(), pn$names[i], pn$lower[[i]],
+            pn$upper[[i]], type, PACKAGE = "rjags")
+    }
+  }
+
+  # Return list of `mcarray` objects
+  return(ans)
 }
 
 
-#' Assign iterations mcarray
+#' Parse Varnames
 #'
-#' Assign values to an mcarray object. Note this is not straightforward because
-#'   for a scalar one would use `x[, 1:10, ] <- value`, whereas for a matrix
-#'   one would use `x[, , 1:10, ] <- value`.
+#' Internal `rjags` function required for \code{\link{jags_samples_in_knitr}}.
 #'
-#' @param x mcarray object.
-#' @param value mcarray object with same dimension except for the penultimate
-#'   dimension (iterations).
-#' @param at vector of integer values at which to place the `value` array.
-#'
-#' @examples \dontrun{
-#'   x <- array(seq(180), dim = c(2, 2, 15, 3))
-#'   value <- 1000 * x[, , 6:10, ]
-#'   at <- 6:10
-#'   assign_iterations_mcarray(x, value, at)
-#' }
-#'
-#' @export
-assign_iterations_mcarray <- function(x, value, at) {
-  dx <- dim(x)
-  dv <- dim(value)
-
-  nx_iter <- dx[length(dx) - 1]
-  nx_chains <- dx[length(dx)]
-  nx_vars <- prod(utils::head(dx, -2))
-
-  nv_iter <- dv[length(dv) - 1]
-  nv_chains <- dv[length(dv)]
-  nv_vars <- prod(utils::head(dv, -2))
-
-  stopifnot(
-    "No. of chains incompatible" =
-      all.equal(nx_chains, nv_chains, check.names = FALSE),
-
-    "Variable dims incompatible" =
-      all.equal(nx_vars, nv_vars, check.names = FALSE),
-
-    "Replacement length not equal to 'at'" =
-      all.equal(length(at), nv_iter, check.names = FALSE)
-  )
-
-  x_flat <- structure(x, dim = c(nx_vars, nx_iter, nx_chains))
-  value_flat <- structure(value, dim = c(nv_vars, nv_iter, nv_chains))
-
-  x_flat[, at, ] <- value_flat
-
-  return(structure(x_flat, dim = dx))
-}
+#' @keywords internal
+parse.varnames <- utils::getFromNamespace("parse.varnames", "rjags")
