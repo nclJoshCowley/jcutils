@@ -4,7 +4,15 @@
 \alias{jags_samples_in_knitr}
 \title{Knitr Friendly Version of \code{jags.samples()}}
 \usage{
-jags_samples_in_knitr(model, variable.names, n.iter, thin)
+jags_samples_in_knitr(
+  model,
+  variable.names,
+  n.iter,
+  thin = 1,
+  type = "trace",
+  force.list = FALSE,
+  ...
+)
 }
 \arguments{
 \item{model}{a jags model object}
@@ -16,7 +24,13 @@ jags_samples_in_knitr(model, variable.names, n.iter, thin)
 
 \item{thin}{thinning interval for monitors}
 
-\item{type}{Argument not implemented, default "trace" assumed.}
+\item{type}{type of monitor (can be vectorised)}
+
+\item{force.list}{option to consistently return a named list of monitor
+             types even if a single monitor type is requested}
+
+\item{...}{optional arguments passed to the update method for jags
+             model objects}
 }
 \description{
 Modified version of \code{\link[rjags]{jags.samples}} that incorporates

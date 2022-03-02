@@ -3,7 +3,6 @@
 #' Modified version of \code{\link[rjags]{jags.samples}} that incorporates
 #'   [https://rmflight.github.io/knitrProgressBar/]{knitrProgressBar}.
 #'
-#' @param type Argument not implemented, default "trace" assumed.
 #' @inheritParams rjags::jags.samples
 #'
 #' @details
@@ -17,81 +16,26 @@
 #' @seealso \code{\link[rjags]{jags.samples}} and its source code.
 #'
 #' @export
-jags_samples_in_knitr <- function(model, variable.names, n.iter, thin) {
-  # Validation
-  stopifnot(
-    "Invalid JAGS model" =
-      inherits(model, "jags"),
+jags_samples_in_knitr <- function(model, variable.names, n.iter,
+                                  thin = 1, type = "trace", force.list = FALSE,
+                                  ...) {
 
-    "variable.names must be a character vector" =
-      (is.character(variable.names) & length(variable.names) > 0),
+  # Create a copy of jags.samples(), with an *editable* (child) environment
+  sub_env <- rlang::new_environment(parent = rlang::ns_env("rjags"))
+  jags.samples_copy <- utils::getAnywhere("jags.samples")$objs[[1]]
+  environment(jags.samples_copy) <- sub_env
 
-    "n.iter must be a positive integer" =
-      (is.numeric(n.iter) & (length(n.iter) == 1) & (n.iter > 0)),
+  # Replace update method with progress bar wrapper version
+  sub_env$update.jags <- function(model, n.iter, progress.bar, ...) {
+    steps <- n.iter / rlang::caller_env()$thin
+    pb <- knitrProgressBar::progress_estimated(steps)
 
-    "thin must be a positive integer" =
-      (is.numeric(thin) & (length(thin) == 1) & (thin > 0))
-  )
-
-  startiter <- model$iter()
-  n.iter <- n.iter - n.iter %% thin
-
-  # Initialise progress bar to work in knitr
-  steps <- n.iter / thin
-  pb <- knitrProgressBar::progress_estimated(steps + 1)
-  knitrProgressBar::update_progress(pb)
-
-  # Code simplified by only allowing type = "trace"
-  type <- "trace"
-  pn <- parse.varnames(variable.names)
-
-  # Set up monitors
-  status <- .Call("set_monitors", model$ptr(), pn$names, pn$lower, pn$upper,
-                  as.integer(thin), type, PACKAGE = "rjags")
-  if (!any(status)) stop("No valid monitors set")
-
-  # Update per step
-  for (. in seq_len(steps)) {
-    stats::update(model, n.iter / steps, progress.bar = "none")
-    knitrProgressBar::update_progress(pb)
-  }
-
-  # Obtain and post-process monitors
-  ans <- .Call("get_monitored_values", model$ptr(), type, PACKAGE = "rjags")
-
-  for (i in seq_along(ans)) {
-    class(ans[[i]]) <- "mcarray"
-    attr(ans[[i]], "varname") <- names(ans)[i]
-
-    # Assure there is a valid dim attribute for pooled scalar nodes:
-    if(is.null(dim(ans[[i]]))) dim(ans[[i]]) <- length(ans[[i]])
-
-    # New attributes for rjags_4-7:
-    attr(ans[[i]], "type") <- type
-    attr(ans[[i]], "iterations") <-
-      c(
-        start = startiter + thin,
-        end = startiter + n.iter,
-        thin=thin
-      )
-  }
-
-  # Clear any monitors
-  for (i in seq_along(variable.names)) {
-    if (status[i]) {
-      .Call("clear_monitor", model$ptr(), pn$names[i], pn$lower[[i]],
-            pn$upper[[i]], type, PACKAGE = "rjags")
+    for (. in seq_len(steps)) {
+      stats::update(model, n.iter / steps, progress.bar = "none", ...)
+      knitrProgressBar::update_progress(pb)
     }
   }
 
-  # Return list of `mcarray` objects
-  return(ans)
+  # Call the resultant copy and return the output
+  jags.samples_copy(model, variable.names, n.iter, thin)
 }
-
-
-#' Parse Varnames
-#'
-#' Internal `rjags` function required for \code{\link{jags_samples_in_knitr}}.
-#'
-#' @keywords internal
-parse.varnames <- utils::getFromNamespace("parse.varnames", "rjags")
