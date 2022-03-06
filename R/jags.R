@@ -22,7 +22,7 @@ jags_samples_in_knitr <- function(model, variable.names, n.iter,
 
   # Create a copy of jags.samples(), with an *editable* (child) environment
   sub_env <- rlang::new_environment(parent = rlang::ns_env("rjags"))
-  jags.samples_copy <- utils::getAnywhere("jags.samples")$objs[[1]]
+  jags.samples_copy <- rjags::jags.samples
   environment(jags.samples_copy) <- sub_env
 
   # Replace update method with progress bar wrapper version
