@@ -27,3 +27,29 @@ matrix_to_latex <- function(x, digits, envir = "pmatrix") {
 
   paste0(c(head, body, foot), collapse = "\n")
 }
+
+
+#' Wrap LaTeX code Inside LaTeX Environment
+#'
+#' Wrap LaTeX code, stored as a character in R, inside an environment such as
+#'     `\begin{envir} ... \end{envir}`.
+#'
+#' @param x object to be converted.
+#' @param envir character. LaTeX environment name.
+#' @param indent integer. How many spaces to be added before each newline.
+#'
+#' @return character that produces the intended formatting when passed
+#'   to \code{\link[base]{cat}} or \code{\link[knitr]{asis_output}}.
+#'
+#' @export
+wrap_inside_latex_environment <- function(x, envir, indent = 4) {
+  indent_ws <- format("", width = indent)
+
+  x_indented <- paste0(indent_ws, x)
+  x_indented <- gsub("\n", paste0("\n", indent_ws), x_indented)
+
+  head <- paste0("\\begin{", envir, "}")
+  foot <- paste0("\\end{", envir, "}")
+
+  paste(head, x_indented, foot, sep = "\n")
+}
