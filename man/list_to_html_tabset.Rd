@@ -4,7 +4,7 @@
 \alias{list_to_html_tabset}
 \title{List to HTML tabset}
 \usage{
-list_to_html_tabset(x, level, id = "id")
+list_to_html_tabset(x, level, id = "id", options)
 }
 \arguments{
 \item{x}{named list.}
@@ -13,6 +13,8 @@ list_to_html_tabset(x, level, id = "id")
 
 \item{id}{character. String to be used in chunk labelling, useful to avoid
 duplicate chunk labels.}
+
+\item{options}{list of options passed to \code{\link[knitr]{knit_child}}.}
 }
 \description{
 Evaluates elements of a named list using names add heading set as some

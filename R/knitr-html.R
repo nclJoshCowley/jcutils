@@ -7,9 +7,10 @@
 #' @param level integer. How many `#` should precede each heading title.
 #' @param id character. String to be used in chunk labelling, useful to avoid
 #'   duplicate chunk labels.
+#' @param options list of options passed to \code{\link[knitr]{knit_child}}.
 #'
 #' @export
-list_to_html_tabset <- function(x, level, id = "id") {
+list_to_html_tabset <- function(x, level, id = "id", options = NULL) {
   if (!knitr::is_html_output()) {
     warning("Not HTML output, exiting early")
     return(invisible(NULL))
@@ -37,8 +38,9 @@ list_to_html_tabset <- function(x, level, id = "id") {
   res <-
     knitr::knit_child(
       text = unlist(src),
-      envir = rlang::current_env(),
-      quiet = TRUE
+      quiet = TRUE,
+      options = options,
+      envir = rlang::current_env()
     )
 
   cat(res, sep = "\n")
