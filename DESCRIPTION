@@ -30,7 +30,9 @@ Suggests:
     broom,
     kableExtra,
     knitrProgressBar,
+    git2r,
     here,
     RefManageR,
     rjags,
+    rprojroot,
     testthat
