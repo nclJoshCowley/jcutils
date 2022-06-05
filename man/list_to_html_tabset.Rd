@@ -4,7 +4,7 @@
 \alias{list_to_html_tabset}
 \title{List to HTML tabset}
 \usage{
-list_to_html_tabset(x, level, id = "id", options)
+list_to_html_tabset(x, level, id = "id", options = NULL)
 }
 \arguments{
 \item{x}{named list.}
