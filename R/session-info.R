@@ -5,9 +5,12 @@
 #'
 #' @param git_repo character. Path to be passed to
 #'   \code{\link[git2r]{repository_head}}.
+#' @param params print output of non-NULL object will be captured and appended.
 #'
 #' @export
-session_info <- function(git_repo = rprojroot::find_root("DESCRIPTION")) {
+session_info <- function(git_repo, params = NULL) {
+  if (missing(git_repo)) git_repo <- rprojroot::find_root("DESCRIPTION")
+
   si <- utils::sessionInfo()
 
   # Sort loaded packages alphabetically
@@ -53,6 +56,14 @@ session_info <- function(git_repo = rprojroot::find_root("DESCRIPTION")) {
       )
   }
 
+  # params only shown when not NULL
+  params_block <- if (is.null(params)) "" else {
+      sprintf(
+        "**Session parameters**\n\n```{r}\n%s\n```",
+        paste0(capture.output(print(params)), collapse = "\n")
+      )
+  }
+
   # Knitr specific output / warning
   is_knitr <- isTRUE(getOption("knitr.in.progress"))
 
@@ -70,6 +81,7 @@ session_info <- function(git_repo = rprojroot::find_root("DESCRIPTION")) {
     "**Packages (base)**", base_packages,
     "**Packages (loaded)**", loaded_packages,
     "**Git**", git_body,
+    params_block,
     # (Knitr)
     if (is_knitr) "</details>",
     sep = "\n\n"
