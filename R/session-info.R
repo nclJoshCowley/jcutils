@@ -67,8 +67,10 @@ session_info <- function(git_repo, params = NULL) {
   # Knitr specific output / warning
   is_knitr <- isTRUE(getOption("knitr.in.progress"))
 
-  if (is_knitr & knitr::opts_current$get("results") != "asis") {
-    warning("Results = 'asis' is expected but not found.")
+  if (is_knitr) {
+    if (knitr::opts_current$get("results") != "asis") {
+      warning("Results = 'asis' is expected but not found.")
+    }
   }
 
   cat(
