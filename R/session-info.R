@@ -60,7 +60,7 @@ session_info <- function(git_repo, params = NULL) {
   params_block <- if (is.null(params)) "" else {
       sprintf(
         "**Session parameters**\n\n```{r}\n%s\n```",
-        paste0(capture.output(print(params)), collapse = "\n")
+        paste0(utils::capture.output(print(params)), collapse = "\n")
       )
   }
 

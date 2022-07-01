@@ -30,6 +30,7 @@ Suggests:
     broom,
     kableExtra,
     knitrProgressBar,
+    ggplot2,
     git2r,
     here,
     RefManageR,
