@@ -63,7 +63,7 @@ We want a function to re-create this, arguments needed are
 # Tabs {.tabset}
 
 ```{r results = "asis"}
-jcutils::list_to_html_tabset(plts, level = 2, id = "initial")
+jcutils::knitr_print_tabset(plts, level = 2)
 ```
 
 # Nested tabs ? {.tabset}
@@ -71,7 +71,7 @@ jcutils::list_to_html_tabset(plts, level = 2, id = "initial")
 ## Defaults {.tabset}
 
 ```{r results = "asis"}
-jcutils::list_to_html_tabset(plts, level = 3, id = "new1")
+jcutils::knitr_print_tabset(plts, level = 3)
 ```
 
 ## Wide x-axis {.tabset}
@@ -79,5 +79,5 @@ jcutils::list_to_html_tabset(plts, level = 3, id = "new1")
 ```{r results = "asis"}
 plts %>%
   purrr::map(~ .x + ggplot2::expand_limits(x = c(0, 20))) %>%
-  jcutils::list_to_html_tabset(level = 3, id = "new2")
+  jcutils::knitr_print_tabset(level = 3)
 ```
