@@ -23,7 +23,6 @@ NULL
 #' @export
 knit_hook_summary <- function(before, options, envir) {
   if (before) {
-    stopifnot(knitr::is_html_output())
     pre_text <- sprintf("<details><summary>%s</summary>\n", options$summary)
     knitr::asis_output(pre_text)
   } else {
