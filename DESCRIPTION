@@ -8,7 +8,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "j.cowley1@ncl.ac.uk")
 Maintainer: Josh Cowley <j.cowley1@ncl.ac.uk>
-Description: Currently a work in progress.
+Description: Utility package for working with R, R markdown and more.
 Depends: 
     R (>= 2.10)
 License: MIT + file LICENSE
