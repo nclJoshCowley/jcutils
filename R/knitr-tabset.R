@@ -45,6 +45,7 @@ knitr_tabset <- function(.x, .f, type = c("quarto", "rmd"), ...) {
 
 
 #' @describeIn knitr_tabset Deprecated, use `knitr_tabset(x, print, "rmd")`.
+#' @param x,level Deprecated.
 #' @export
 knitr_print_tabset <- function(x, level) {
   lifecycle::deprecate_soft("v0.3.0", "knitr_print_tabset()", "knitr_tabset()")

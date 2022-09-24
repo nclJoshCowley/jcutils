@@ -17,6 +17,8 @@ knitr_print_tabset(x, level)
 \item{type}{choice, Quarto or R Markdown. Which rendering program is used?}
 
 \item{...}{extra arguments passed to \code{.f}}
+
+\item{x, level}{Deprecated.}
 }
 \value{
 \code{.x} is silently returned to allow for piping.
