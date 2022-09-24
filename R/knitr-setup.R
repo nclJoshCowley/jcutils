@@ -24,27 +24,3 @@ knitr_default_setup <- function(..., base_size = 18) {
 
   knitr::opts_chunk$set(utils::modifyList(knitr_opts, args))
 }
-
-
-#' Print List Elements in tabset
-#'
-#' Print elements in a list surrounded by defined headings, useful for
-#'   putting content into tabset within compataible `rmarkdown` documents.
-#'
-#' @param x named list of objects to be printed.
-#' @param level integer. How many `#` should precede each heading title.
-#'
-#' @export
-knitr_print_tabset <- function(x, level) {
-  stopifnot(is.list(x))
-
-  hn <- paste(rep("#", level), collapse = "")
-
-  purrr::iwalk(x, function(.x, .nm) {
-    cat(sprintf("%s %s\n\n", hn, .nm))
-    print(.x)
-    cat("\n\n")
-  })
-
-  invisible(x)
-}
