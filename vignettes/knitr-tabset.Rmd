@@ -1,0 +1,89 @@
+---
+title: "Programmatic Tabsets using Knitr Engine"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{knitr-tabset}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+#| include: false
+library(jcutils)
+jcutils::knitr_default_setup(echo = TRUE)
+```
+
+This vignette showcases the ability to output a list to a knitr report 
+    (Quarto or R Markdown) in the form of a tabset.
+Unfortunately, tabs are not available in Vignettes and will not display 
+    properly but the output still serve as an example.
+
+We make use of the `mtcars` dataset to illustrate typical usage.
+
+```{r}
+data("mtcars", package = "datasets")
+vars <- stats::setNames(nm = c("disp", "hp", "drat"))
+```
+
+## Signature
+
+```{.r}
+jcutils::knitr_tabset(.x, .f, type = c("quarto", "rmd"), ...)
+```
+
+- `.x` is a list to loop through; it is advised to pass a named list for tab 
+  headings but can be omitted to use numerical labelling;
+  
+- `.f` is a function or formula similar in operation to `purrr::walk`;
+
+- `...` also behaves like `purrr` methods for passing arguments to `.f`;
+
+- `.type` is required to ensure output works correctly for Quarto or R Markdown.
+
+## Plots (`ggplot2`)
+
+```{r plotlist}
+plotlist <- 
+  lapply(vars, function(.x) ggplot2::qplot(mtcars$mpg, mtcars[[.x]]))
+```
+
+Unnamed list example.
+
+```{r plotlist-tabs-unnamed}
+#| results: asis
+jcutils::knitr_tabset(unname(plotlist), type = "rmd")
+```
+
+Named list example.
+
+```{r plotlist-tabs-named}
+#| results: asis
+jcutils::knitr_tabset(plotlist, type = "rmd")
+```
+
+## Tables (`gt`)
+
+Printing a `gt` object (the default) leads to issues so we convert it to raw
+    HTML and pipe it through `cat`.
+
+```{r gtlist}
+gtlist <- 
+  lapply(vars, function(.x) gt::gt(mtcars[1:5, .x, drop = FALSE]))
+```
+
+```{r gtlist-tabs}
+#| results: asis
+jcutils::knitr_tabset(gtlist, ~ cat(gt::as_raw_html(.x)), type = "rmd")
+```
+
+## Tables (`kable`)
+
+```{r kablelist}
+kablelist <-
+  lapply(vars, function(.x) knitr::kable(mtcars[1:5, .x, drop = FALSE]))
+```
+
+```{r kablelist-tabs}
+#| results: asis
+jcutils::knitr_tabset(kablelist, type = "rmd")
+```

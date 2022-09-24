@@ -33,8 +33,10 @@ Suggests:
     knitrProgressBar,
     ggplot2,
     git2r,
+    gt,
     here,
     RefManageR,
     rjags,
     rprojroot,
     testthat
+VignetteBuilder: knitr
