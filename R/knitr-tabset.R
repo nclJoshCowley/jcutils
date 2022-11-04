@@ -30,7 +30,7 @@ knitr_tabset <- function(.x, .f, type = c("quarto", "rmd"), ...) {
       rmd = "#### {.unlisted .unnumbered}"
     )
 
-  cat(header, "\n\n", sep = "")
+  cat("\n\n", header, "\n\n", sep = "")
 
   for (i in seq_along(.x)) {
     cat("##### ", nms[i], "\n\n", sep = "")
