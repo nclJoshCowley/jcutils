@@ -24,6 +24,7 @@ Imports:
     purrr,
     rlang,
     rmarkdown,
+    quarto,
     tibble,
     tidyr,
     tidyselect
