@@ -7,7 +7,7 @@
 #'   ```
 #'   knitr::knit_hooks$set(NAME = knit_hook_*)
 #'   ```
-#'   See \url{https://yihui.org/knitr/hooks} for more information.
+#'   See <https://yihui.org/knitr/hooks> for more information.
 #'
 #' @param before,options,envir required arguments.
 #'
@@ -17,7 +17,7 @@ NULL
 #' Summary, Hide Content (Knit Hook)
 #'
 #' @describeIn knit-hook-chunk
-#'   Hide content inside of \code{<details><summary> ...} where the summary text
+#'   Hide content inside of `<details><summary> ...` where the summary text
 #'   is the value of the chunk option.
 #'
 #' @export

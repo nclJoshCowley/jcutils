@@ -1,14 +1,17 @@
-#' Pipe operator
+#' Imports
 #'
-#' See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
+#' Imports from other packages used within this package
 #'
-#' @name %>%
-#' @rdname pipe
-#' @keywords internal
-#' @export
-#' @importFrom magrittr %>%
-#' @usage lhs \%>\% rhs
-NULL
-
+#' @name utils-imports
+#'
 #' @importFrom rlang .data
+#' @importFrom rlang %||%
+#' @importFrom magrittr %>%
+#'
+#' @keywords internal
+#'
+#' @section Links:
+#'   - [rlang::dot-data()], data pronoun.
+#'   - [rlang::op-null-default()], default value for NULL operator.
+#'   - [magrittr::%>%()], magrittr pipe.
 NULL

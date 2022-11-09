@@ -12,7 +12,7 @@ knitr_print_tabset(x, level)
 \arguments{
 \item{.x}{list to be looped over, names inform tab headings.}
 
-\item{.f}{function or formula. See \code{\link[purrr]{as_mapper}}.}
+\item{.f}{function or formula. See \code{\link[purrr:as_mapper]{purrr::as_mapper()}}.}
 
 \item{type}{choice, Quarto or R Markdown. Which rendering program is used?}
 

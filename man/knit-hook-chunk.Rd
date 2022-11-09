@@ -15,7 +15,7 @@ Knit (chunk) hooks to be ran before and after the execution of code chunks.
 }
 \section{Functions}{
 \itemize{
-\item \code{knit_hook_summary}: Hide content inside of \code{<details><summary> ...} where the summary text
+\item \code{knit_hook_summary}: Hide content inside of \verb{<details><summary> ...} where the summary text
 is the value of the chunk option.
 }}
 

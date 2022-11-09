@@ -41,7 +41,7 @@ knit_tabset <- function(x, ...) {
 #' Map elements through `.f` and wrap each output into a tab within a tabset.
 #'
 #' @param .x list to be looped over, names inform tab headings.
-#' @param .f function or formula. See \code{\link[purrr]{as_mapper}}.
+#' @param .f function or formula. See [purrr::as_mapper()].
 #' @param type choice, Quarto or R Markdown. Which rendering program is used?
 #' @param ... extra arguments passed to `.f`
 #'
