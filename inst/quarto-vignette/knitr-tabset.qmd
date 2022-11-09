@@ -1,86 +1,111 @@
 ---
-title: "Programmatic Tabsets using Knitr Engine"
+title: "Dynamic Tabsets using Knitr Engine"
 author: "Josh Cowley"
+date: today
 format: html
+toc: true
 ---
 
 ```{r setup}
 #| include: false
+library(ggplot2)
+
 library(jcutils)
 jcutils::knitr_default_setup(echo = TRUE)
+
+knit_print.list <- jcutils::knit_tabset
 ```
 
 This vignette showcases the ability to output a list to a knitr report 
     (Quarto or R Markdown) in the form of a tabset.
-It is advised but not required to pass a named list to inform each tabs heading.
+
 In the case of an unnamed list, the method defaults to numerical labelling.
 
 We make use of the `mtcars` dataset to illustrate typical usage.
 
 ```{r}
 data("mtcars", package = "datasets")
+
 vars <- stats::setNames(nm = c("disp", "hp", "drat"))
+
+gg_mtcars <- function(.x, ...) {
+  ggplot2::qplot(mtcars[[.x]], mtcars$mpg, xlab = .x, ...)
+}
 ```
 
-## Signature
+## Usage
 
-```{.r}
-jcutils::knitr_tabset(.x, .f, type = c("quarto", "rmd"), ...)
+To affect all lists within a document, one can define a `list` only method for
+    the generic `knit_print` which is explained [here][knit_print_vignette].
+
+```{r}
+#| echo: true
+knit_print.list <- jcutils::knit_tabset
 ```
 
-- `.x` is a list to loop through; it is advised to pass a named list for tab 
-  headings but can be omitted to use numerical labelling;
-  
-- `.f` is a function or formula similar in operation to `purrr::walk`;
+Affecting a single chunk is achieved through the `render` chunk option.
 
-- `...` also behaves like `purrr` methods for passing arguments to `.f`;
+````markdown
+```{r}`r ''`
+#| render: !expr jcutils::knit_tabset
+myList
+```
+````
 
-- `.type` is required to ensure output works correctly for Quarto or R Markdown.
+::: {.callout-note}
+We don't pass the list to `print` but rather make it visible either by calling 
+    its reference name or a function that returns said list.
+::::
 
 ## Plots (`ggplot2`)
 
 ```{r plotlist}
-plotlist <- 
-  lapply(vars, function(.x) ggplot2::qplot(mtcars$mpg, mtcars[[.x]]))
+plotlist <- lapply(vars, gg_mtcars)
 ```
 
-Unnamed list example.
+### Unnamed List
 
 ```{r plotlist-tabs-unnamed}
-#| results: asis
-jcutils::knitr_tabset(unname(plotlist))
+unname(plotlist)
 ```
 
-Named list example.
+### Named List
 
 ```{r plotlist-tabs-named}
-#| results: asis
-jcutils::knitr_tabset(plotlist)
+plotlist
+```
+
+### Nested List
+
+```{r plotlist-tabs-nested}
+geom_args <- list(both = c("line", "point"), line = "line", point = "point")
+
+lapply(geom_args, function(.g) lapply(vars, gg_mtcars, geom = .g))
 ```
 
 ## Tables (`gt`)
 
-Printing a `gt` object (the default) leads to issues so we convert it to raw
-    HTML and pipe it through `cat`.
-
 ```{r gtlist}
 gtlist <- 
-  lapply(vars, function(.x) gt::gt(mtcars[1:5, .x, drop = FALSE]))
+  lapply(vars, function(.x) gt::gt(mtcars[1:5, c(.x, "mpg"), drop = FALSE]))
 ```
 
 ```{r gtlist-tabs}
-#| results: asis
-jcutils::knitr_tabset(gtlist, ~ cat(gt::as_raw_html(.x)))
+gtlist
 ```
 
 ## Tables (`kable`)
 
 ```{r kablelist}
 kablelist <-
-  lapply(vars, function(.x) knitr::kable(mtcars[1:5, .x, drop = FALSE]))
+  lapply(vars, function(.x) knitr::kable(mtcars[1:5, c(.x, "mpg"), drop = FALSE]))
 ```
 
 ```{r kablelist-tabs}
-#| results: asis
-jcutils::knitr_tabset(kablelist)
+kablelist
 ```
+
+
+[knit_print_vignette]:
+  https://cran.r-project.org/web/packages/knitr/vignettes/knit_print.html
+  "Knitr - Custom Print Methods"
