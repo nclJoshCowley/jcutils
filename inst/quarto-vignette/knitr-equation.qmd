@@ -1,0 +1,43 @@
+---
+title: "Untitled"
+format: html
+keep-md: true
+---
+
+```{r}
+jcutils::knitr_default_setup(echo = "fenced")
+```
+
+
+## Name
+
+```{r ex-name}
+#| render: !expr jcutils::printer_equation
+#| eqn_name: \Sigma
+diag(5)
+```
+
+## Environment
+
+```{r ex-envir}
+#| render: !expr jcutils::printer_equation
+#| eqn_name: R
+#| eqn_envir: bmatrix
+matrix(c("\\cos(x)", "\\sin(x)", "-\\sin(x)", "\\cos(x)"), 2, 2)
+```
+
+## Digits
+
+```{r ex-digits}
+#| render: !expr jcutils::printer_equation
+#| eqn_digits: 4
+matrix(c(pi, 1 - pi), nrow = 1)
+```
+
+## Vector
+
+```{r ex-vector}
+#| render: !expr jcutils::printer_equation
+#| eqn_digits: 2
+stats::rnorm(n = 5)
+```
