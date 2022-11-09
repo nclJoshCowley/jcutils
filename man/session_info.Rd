@@ -7,8 +7,7 @@
 session_info(git_repo, params = NULL)
 }
 \arguments{
-\item{git_repo}{character. Path to be passed to
-\code{\link[git2r:repository_head]{git2r::repository_head()}}.}
+\item{git_repo}{character. Path to be passed to \code{\link[git2r:repository_head]{git2r::repository_head()}}.}
 
 \item{params}{print output of non-NULL object will be captured and appended.}
 }

@@ -35,7 +35,7 @@ printer_equation <- function(x, options, ...) {
 #' @param x list. Each element is passed to `knit_print` within tabs.
 #'
 #' @export
-printer_tabset <- function(x, ...) {
+printer_tabset <- function(x, options, ...) {
   # Backwards compatability with .Rmd
   if (isTRUE(getOption("knitr.tabset.format") == "rmd")) {
     header <- "#### { .tabset .unlisted .unnumbered}"

@@ -150,7 +150,7 @@ rmd_summary.default <- function(object, fmt = c("html", "latex"), digits = 3, re
       ),
       `Std Error` = reformat(.data$std.error, ""),
       Statistic = reformat(.data$statistic, ""),
-      P = ifelse(is.na(.data$p.value), "", jcutils::repr_pvals(.data$p.value))
+      P = ifelse(is.na(.data$p.value), "", format.pval(.data$p.value))
     ) %>%
     jcutils::rmd_table(fmt)
 }
@@ -218,7 +218,7 @@ rmd_summary.mlm <- function(object, fmt = c("html", "latex"), digits = 3, resp) 
       ),
       `Std Error` = reformat(.data$std.error, ""),
       Statistic = reformat(.data$statistic, ""),
-      P = ifelse(is.na(.data$p.value), "", jcutils::repr_pvals(.data$p.value))
+      P = ifelse(is.na(.data$p.value), "", format.pval(.data$p.value))
     ) %>%
     jcutils::rmd_table(fmt)
 }

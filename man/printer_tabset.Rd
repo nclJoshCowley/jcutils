@@ -4,7 +4,7 @@
 \alias{printer_tabset}
 \title{Print Tabsets (via \code{knit_print})}
 \usage{
-printer_tabset(x, ...)
+printer_tabset(x, options, ...)
 }
 \arguments{
 \item{x}{list. Each element is passed to \code{knit_print} within tabs.}
