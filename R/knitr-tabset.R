@@ -1,41 +1,3 @@
-#' List Tabsets (via `knit_print`)
-#'
-#' To be used as a method for `knit_print` generic.
-#'
-#' @param x list. Elements passed to `knit_print` within tabs,
-#'   names inform headings.
-#' @param ... extra arguments not used.
-#'
-#' @seealso `vignette("knit_print", package = "knitr")`.
-#'
-#' @export
-knit_tabset <- function(x, ...) {
-  # Backwards compatability with .Rmd
-  if (isTRUE(getOption("knitr.tabset.format") == "rmd")) {
-    header <- "#### { .tabset .unlisted .unnumbered}"
-    footer <- "#### {.unlisted .unnumbered}"
-  } else {
-    header <- ":::: {.panel-tabset}"
-    footer <- "::::"
-  }
-
-  res <- purrr::imap(x, ~ knitr::knit_child(
-    text = c(
-      "##### `r .y`",
-      "",
-      "```{r}",
-      "#| echo: false",
-      ".x",
-      "```"
-    ),
-    envir = environment(),
-    quiet = TRUE
-  ))
-
-  knitr::asis_output(paste(c(header, res, footer), collapse = "\n\n"))
-}
-
-
 #' Output List Elements as Tabset
 #'
 #' Map elements through `.f` and wrap each output into a tab within a tabset.
@@ -49,7 +11,7 @@ knit_tabset <- function(x, ...) {
 #'
 #' @export
 knitr_tabset <- function(.x, .f, type = c("quarto", "rmd"), ...) {
-  lifecycle::deprecate_soft("v0.3.0", "knitr_print_tabset()", "knit_tabset()")
+  lifecycle::deprecate_soft("v0.3.0", "knitr_print_tabset()", "printer_tabset()")
 
   if (missing(.f)) .f <- print
   .f <- purrr::as_mapper(.f, ...)
@@ -88,6 +50,6 @@ knitr_tabset <- function(.x, .f, type = c("quarto", "rmd"), ...) {
 #' @param x,level Deprecated.
 #' @export
 knitr_print_tabset <- function(x, level) {
-  lifecycle::deprecate_soft("v0.3.0", "knitr_print_tabset()", "knit_tabset()")
+  lifecycle::deprecate_soft("v0.3.0", "knitr_print_tabset()", "printer_tabset()")
   knitr_tabset(.x = x, .f = print, type = "rmd")
 }

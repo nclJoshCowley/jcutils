@@ -13,7 +13,7 @@ library(ggplot2)
 library(jcutils)
 jcutils::knitr_default_setup(echo = TRUE)
 
-knit_print.list <- jcutils::knit_tabset
+knit_print.list <- jcutils::printer_tabset
 ```
 
 This vignette showcases the ability to output a list to a knitr report 
@@ -40,14 +40,14 @@ To affect all lists within a document, one can define a `list` only method for
 
 ```{r}
 #| echo: true
-knit_print.list <- jcutils::knit_tabset
+knit_print.list <- jcutils::printer_tabset
 ```
 
 Affecting a single chunk is achieved through the `render` chunk option.
 
 ````markdown
 ```{r}`r ''`
-#| render: !expr jcutils::knit_tabset
+#| render: !expr jcutils::printer_tabset
 myList
 ```
 ````
