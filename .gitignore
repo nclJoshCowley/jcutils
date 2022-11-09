@@ -1,3 +1,10 @@
+# Project specific ignores
+# ------------------------
+
+
+# https://github.com/github/gitignore/blob/master/R.gitignore
+# -----------------------------------------------------------
+
 # History files
 .Rhistory
 .Rapp.history
@@ -37,3 +44,10 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# pkgdown site
+docs/
+
+# translation temp files
+po/*~
+inst/doc
