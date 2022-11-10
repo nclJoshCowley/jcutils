@@ -3,6 +3,7 @@ title: "Dynamic Tabsets using Knitr Engine"
 author: "Josh Cowley"
 date: today
 format: html
+self-contained: true
 toc: true
 ---
 

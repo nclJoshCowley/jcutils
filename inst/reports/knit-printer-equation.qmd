@@ -1,7 +1,10 @@
 ---
-title: "Untitled"
+title: "LaTeX Equation Printing using Knitr Engine"
+author: "Josh Cowley"
+date: today
 format: html
-keep-md: true
+self-contained: true
+toc: true
 ---
 
 ```{r}
