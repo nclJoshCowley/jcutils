@@ -36,6 +36,8 @@ printer_equation <- function(x, options, ...) {
 #'
 #' @export
 printer_tabset <- function(x, options, ...) {
+  if (is.null(names(x))) names(x) <- seq_along(x)
+
   # Backwards compatability with .Rmd
   if (isTRUE(getOption("knitr.tabset.format") == "rmd")) {
     header <- "#### { .tabset .unlisted .unnumbered}"
@@ -45,18 +47,20 @@ printer_tabset <- function(x, options, ...) {
     footer <- "::::"
   }
 
-  res <- purrr::imap(x, ~ knitr::knit_child(
-    text = c(
-      "##### `r .y`",
-      "",
-      "```{r}",
-      "#| echo: false",
-      ".x",
-      "```"
-    ),
-    envir = environment(),
-    quiet = TRUE
-  ))
+  res <- lapply(seq_along(x), function(i) {
+    knitr::knit_child(
+      text = c(
+        "##### `r names(x)[i]`",
+        "",
+        "```{r}",
+        "#| echo: false",
+        "x[[i]]",
+        "```"
+      ),
+      envir = environment(),
+      quiet = TRUE
+    )
+  })
 
   knitr::asis_output(paste(c(header, res, footer), collapse = "\n\n"))
 }

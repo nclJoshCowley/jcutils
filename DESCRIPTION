@@ -17,20 +17,14 @@ LazyData: true
 RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 Imports:
-    broom,
-    dplyr,
     ggplot2,
     git2r,
-    kableExtra,
     knitr,
     lifecycle,
     magrittr,
-    rlang,
-    rprojroot,
     quarto,
-    tibble,
-    tidyr,
-    tidyselect,
-    purrr
+    rlang,
+    rprojroot
 Suggests:
+    kableExtra,
     testthat
