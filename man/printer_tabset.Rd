@@ -17,8 +17,18 @@ Converts a list to a Quarto / RMD tabset using the names as tab headings.
 }
 \section{Reporting}{
 
-Either define a method, say \verb{knit_print.foo <- printer_*}, in the report
-or set the \code{render} chunk option equal to the desired function.
+These methods are to be used in Quarto / RMD reports.
+
+For global usage on all objects of class \code{foo}, register as an S3 method,
+typically in the setup chunk.\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(knitr)
+registerS3method("knit_print", "foo", printer_*)
+}\if{html}{\out{</div>}}
+
+For one-off usage, set the \code{render} chunk option, that is:\if{html}{\out{<div class="sourceCode markdown">}}\preformatted{```\{r\}
+#| render: !expr printer_*
+
+```
+}\if{html}{\out{</div>}}
 }
 
 \seealso{
