@@ -39,7 +39,9 @@ printer_tabset <- function(x, options, ...) {
   if (is.null(names(x))) names(x) <- seq_along(x)
 
   # Backwards compatability with .Rmd
-  if (isTRUE(getOption("knitr.tabset.format") == "rmd")) {
+  is_rmd <- grepl("\\.Rmd$", knitr::current_input(), ignore.case = TRUE)
+
+  if (isTRUE(is_rmd)) {
     header <- "#### { .tabset .unlisted .unnumbered}"
     footer <- "#### {.unlisted .unnumbered}"
   } else {

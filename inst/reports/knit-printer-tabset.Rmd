@@ -1,0 +1,107 @@
+---
+title: "Dynamic Tabsets using Knitr Engine"
+author: "Josh Cowley"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    self-contained: true
+---
+
+```{r setup}
+#| include: false
+library(ggplot2)
+library(jcutils)
+jcutils::knitr_default_setup(echo = TRUE)
+```
+
+This vignette showcases the ability to output a list to a knitr report 
+    (Quarto or R Markdown) in the form of a tabset.
+
+In the case of an unnamed list, the method defaults to numerical labelling.
+
+We make use of the `mtcars` dataset to illustrate typical usage.
+
+```{r}
+data("mtcars", package = "datasets")
+
+vars <- stats::setNames(nm = c("disp", "hp", "drat"))
+
+gg_mtcars <- function(.x, ...) {
+  ggplot2::qplot(mtcars[[.x]], mtcars$mpg, xlab = .x, ...)
+}
+```
+
+## Usage
+
+To affect all lists within a document, one can register a method for the S3 
+    generic `knit_print` which is explained [here][knit_print_vignette].
+
+```{r}
+#| echo: true
+library(knitr)
+registerS3method("knit_print", "list", jcutils::printer_tabset)
+```
+
+Affecting a single chunk is achieved through the `render` chunk option.
+
+````markdown
+```{r}`r ''`
+#| render: !expr jcutils::printer_tabset
+myList
+```
+````
+
+::: {.callout-note}
+We don't pass the list to `print` but rather make it visible either by calling 
+    its reference name or a function that returns said list.
+::::
+
+## Plots (`ggplot2`)
+
+```{r plotlist}
+plotlist <- lapply(vars, gg_mtcars)
+```
+
+### Unnamed List
+
+```{r plotlist-tabs-unnamed}
+unname(plotlist)
+```
+
+### Named List
+
+```{r plotlist-tabs-named}
+plotlist
+```
+
+### Nested List
+
+Nested lists work in Quarto but not in Rmd format.
+  See [#11](https://github.com/nclJoshCowley/jcutils/issues/11)
+
+## Tables (`gt`)
+
+```{r gtlist}
+gtlist <- 
+  lapply(vars, function(.x) gt::gt(mtcars[1:5, c(.x, "mpg"), drop = FALSE]))
+```
+
+```{r gtlist-tabs}
+gtlist
+```
+
+## Tables (`kable`)
+
+```{r kablelist}
+kablelist <-
+  lapply(vars, function(.x) knitr::kable(mtcars[1:5, c(.x, "mpg"), drop = FALSE]))
+```
+
+```{r kablelist-tabs}
+kablelist
+```
+
+
+[knit_print_vignette]:
+  https://cran.r-project.org/web/packages/knitr/vignettes/knit_print.html
+  "Knitr - Custom Print Methods"
