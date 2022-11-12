@@ -8,7 +8,10 @@
 #'
 #' @export
 session_info <- function(git_repo, params = NULL) {
-  if (missing(git_repo)) git_repo <- rprojroot::find_root("DESCRIPTION")
+  if (missing(git_repo)) {
+    git_repo <- try(rprojroot::find_root("DESCRIPTION"), silent = TRUE)
+    if (inherits(git_repo, "try-error")) git_repo <- NULL
+  }
 
   si <- utils::sessionInfo()
 
@@ -81,7 +84,7 @@ session_info <- function(git_repo, params = NULL) {
     "**Locale**", locale_body,
     "**Packages (base)**", base_packages,
     "**Packages (loaded)**", loaded_packages,
-    "**Git**", git_body,
+    "**Git**",  if (!is.null(git_repo)) git_body else "N/A",
     params_block,
     # (Knitr)
     if (is_knitr) "</details>",
