@@ -15,14 +15,16 @@ Knit (chunk) hooks to be ran before and after the execution of code chunks.
 }
 \section{Functions}{
 \itemize{
-\item \code{knit_hook_summary}: Hide content inside of \verb{<details><summary> ...} where the summary text
+\item \code{knit_hook_summary()}: Hide content inside of \verb{<details><summary> ...} where the summary text
 is the value of the chunk option.
-}}
 
+}}
 \section{Knitr}{
 
-To use any of these functions. use the following in a R markdown document:\preformatted{knitr::knit_hooks$set(NAME = knit_hook_*)
-}
+To use any of these functions. use the following in a R markdown document:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{knitr::knit_hooks$set(NAME = knit_hook_*)
+}\if{html}{\out{</div>}}
 
 See \url{https://yihui.org/knitr/hooks} for more information.
 }
