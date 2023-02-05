@@ -38,7 +38,7 @@ printer_equation <- function(x, options, ...) {
 printer_tabset <- function(x, options, ...) {
   if (is.null(names(x))) names(x) <- seq_along(x)
 
-  # Backwards compatability with .Rmd
+  # Backwards compatibility with .Rmd
   is_rmd <- grepl("\\.Rmd$", knitr::current_input(), ignore.case = TRUE)
 
   if (isTRUE(is_rmd)) {
@@ -49,20 +49,22 @@ printer_tabset <- function(x, options, ...) {
     footer <- "::::"
   }
 
-  res <- lapply(seq_along(x), function(i) {
-    knitr::knit_child(
-      text = c(
-        "##### `r names(x)[i]`",
-        "",
-        "```{r}",
-        "#| echo: false",
-        "x[[i]]",
-        "```"
-      ),
-      envir = environment(),
-      quiet = TRUE
+  tabs <-
+    paste(
+      sprintf("##### %s\n", names(x)),
+      "```{r, echo = FALSE}",
+      sprintf("x[[%i]]", seq_along(x)),
+      "```",
+      sep = "\n",
+      collapse = "\n\n"
     )
-  })
 
-  knitr::asis_output(paste(c(header, res, footer), collapse = "\n\n"))
+  out <- knitr::knit_child(
+    text = c(header, tabs, footer),
+    options = options[c("fig.asp", "fig.width", "opts.label")],
+    envir = environment(),
+    quiet = TRUE
+  )
+
+  return(knitr::asis_output(out))
 }
